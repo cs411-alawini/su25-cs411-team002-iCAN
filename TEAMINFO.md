@@ -12,8 +12,8 @@
 | Member1     |  mcmeans2@illinois.edu |
 | Member2     |      Pierre Font       |
 | Member2     |   pfont2@illinois.edu  |
-| Member3     |                        |
-| Member3     |                        |
+| Member3     |     Mengmeng Fang      |
+| Member3     |    mf57@illinois.edu   |
 
 ## Project Information
 
