@@ -19,7 +19,7 @@
 
 |   Info      |        Description     |
 | ----------- | ---------------------- |
-|  Title      |       ProjectTitle     |
+|  Title      |   Pokémon Badge Quest  |
 | System URL  |      link_to_system    |
 | Video Link  |      link_to_video     |
 
