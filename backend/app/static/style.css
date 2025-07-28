@@ -1,0 +1,79 @@
+/* Entrance Pages */
+.loginPage, .registerPage {
+    display: grid;
+	gap: 20px;
+	width: 100%;
+	height: 100vh;
+	padding: 10px;
+	box-sizing: border-box;
+	grid-template-columns: .5fr 5fr .5fr;
+    grid-template-rows: .5fr 5fr .5fr;
+	margin: 0;
+}
+
+.login-section, .register-section {
+    grid-column: 2;
+	grid-row: 2;
+	border: 1px solid #333;
+	padding: 20px;
+	text-align: left;
+	height: auto;
+}
+
+#greeting {
+	text-align: center;
+}
+
+#entrance-form {
+	text-align: center;
+	width: 100%;
+}
+
+#submitUserPass {
+	float: right;
+}
+
+#entrance-header, #entrance-footer {
+	grid-column: 1 / span 3;
+	padding: 10px;
+}
+
+
+/* Homepage */
+.homePage {
+	display: grid;
+	gap: 20px;
+	width: 100%;
+	height: 100vh;
+	padding: 10px;
+	box-sizing: border-box;
+    grid-template-columns: 1fr 3fr 1fr;
+	grid-template-rows: 1fr 3fr 1fr;
+}
+
+.header, .footer {
+	grid-column: 1 / span 3;
+}
+
+.game-navbar button, .profile-navbar button {
+	display: block;
+	margin: 20px;
+}
+
+.main-area {
+	display: grid;
+	gap: 20px;
+	width: 100%;
+	height: 100%;
+	padding: 10px;
+	box-sizing: border-box;
+    grid-template-rows: 2fr 1fr;
+}
+
+.user-gym{
+	border: 5px solid black;
+}
+
+#enter-gym {
+	float: right;
+}
