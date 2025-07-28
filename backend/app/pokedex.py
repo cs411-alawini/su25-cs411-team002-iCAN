@@ -1,5 +1,4 @@
 from flask import jsonify
-import pymysql
 from app.db import getconn
 from flask import Blueprint
 

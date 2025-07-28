@@ -28,5 +28,6 @@ def getconn() -> pymysql.connections.Connection:
         user=db_user,
         password=db_pass,
         db=db_name,
+        cursorclass=pymysql.cursors.DictCursor
     )
     return conn
