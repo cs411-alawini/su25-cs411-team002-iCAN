@@ -1,9 +1,9 @@
-from flask import jsonify
+from flask import jsonify, render_template, Blueprint
 from app.db import getconn
-from flask import Blueprint
+
 
 # Routes will go here e.g. @bp.route('/pokedex')
-bp = Blueprint('pokedex', __name__, url_prefix='/pokedex')
+bp = Blueprint('pokedex', __name__, url_prefix='/pokedex', template_folder='templates')
 
 # Create the endpoint at url_prefix='/pokedex'
 @bp.route('/', methods=['GET'])
@@ -31,8 +31,12 @@ def get_all_pokemon():
     
         # Close the cursor and return the data as JSON
         cursor.close()
-        return jsonify(results)
+        #return jsonify(results)
+
+        # Rendering results in viewer
+        return render_template('pokedex.html', entries=results)
     
+
     except Exception as e:
         print(f"There was an error fetching data: {e}")
         return jsonify({"error": str(e)}), 500

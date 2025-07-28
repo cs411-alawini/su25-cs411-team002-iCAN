@@ -1,5 +1,5 @@
 #!/bin/sh
-'''exec' "/Users/hannahkim/Desktop/CS 411 SU25/Pokemon Project/su25-cs411-team002-iCAN/.venv/bin/python" "$0" "$@"
+'''exec' "/Users/hannahkim/Desktop/CS 411 SU25/Pokemon Project/su25-cs411-team002-iCAN/.venv/bin/python3.12" "$0" "$@"
 ' '''
 # -*- coding: utf-8 -*-
 import re

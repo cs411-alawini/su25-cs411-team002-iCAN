@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokedex</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f4f9; margin: 2em; }
+        table { width: 100%; border-collapse: collapse; box-shadow: 0 2px 3px rgba(0,0,0,0.1); }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; }
+        thead th { background-color: #e74c3c; color: white; }
+        tbody tr:nth-of-type(even) { background-color: #f9f9f9; }
+        tbody tr:hover { background-color: #f1f1f1; }
+    </style>
+</head>
+<body>
+
+    <h1>Pokedex Entries</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Type 1</th>
+                <th>Type 2</th>
+                <th>HP</th>
+                <th>Attack</th>
+                <th>Defense</th>
+            </tr>
+        </thead>
+        <tbody>
+            {# This is a Jinja2 loop that iterates through the data from your Python code #}
+            {% for pokemon in entries %}
+                <tr>
+                    {# The {{ ... }} syntax inserts the data into the HTML #}
+                    <td>{{ pokemon.pokedex_id }}</td>
+                    <td>{{ pokemon.name }}</td>
+                    <td>{{ pokemon.pType_1 }}</td>
+                    <td>{{ pokemon.pType_2 or 'N/A' }}</td>
+                    <td>{{ pokemon.hp }}</td>
+                    <td>{{ pokemon.attack }}</td>
+                    <td>{{ pokemon.defense }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7">No Pokedex entries found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
