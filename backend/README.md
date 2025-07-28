@@ -1,25 +1,7 @@
 # README for Team iCAN
-## Testing on your computer
+
+## Setting up Flask and GCP - Only need to do once
 Below are instructions on how to test this on your computer. The code is written below and begins with a dollar sign ($). Do not copy the dollar sign. Please copy all the code after the dollar sign, but do not include the dollar sign in the code.
-
-1. Activate the virtual environment:
-$ source .venv/bin/activate
-
-2. Download dependencies:
-$
-
-
-
-3. Copy paste:
-export INSTANCE_CONNECTION_NAME="my-gcp-project:us-central1:my-sql-instance"
-export DB_USER="hannahk8"
-export DB_PASS="hannahk8"
-export DB_NAME="pokemon_battle_db"
-
-4. Get to the backend directory
-$ cd backend
-
-6. Grab the key to our GCP 
 
 
 1. Navigate to this site: https://cloud.google.com/sdk/docs/install
@@ -29,40 +11,58 @@ $ uname -m
 
 3. Download that platform's package
 
+4. In terminal, get to the Downloads directory
+$ cd Downloads
 
-cd to downloads
-tar -xf google-cloud-cli-darwin-arm.tar.gz
+5. Once you're in the Downloads directory, run the following code:
+$ tar -xf google-cloud-cli-darwin-arm.tar.gz
 
-./google-cloud-sdk/install.sh
+6. Run this
+$ ./google-cloud-sdk/install.sh
 
-./google-cloud-sdk/bin/gcloud init
+7. Then, run this
+$ ./google-cloud-sdk/bin/gcloud init
 
-python -m venv .venv
-source .venv/bin/activate
+8. Create a virtual environment
+$ python -m venv .venv
 
-cd backend
+9. Activate your virtual environment
+$ source .venv/bin/activate
 
-pip install -r requirements.txt
+10. Navigate to the root folder (make sure you are in "su25-cs411-team002-iCAN")
 
-go to root folder
-touch .env
+11. Install the dependencies
+$ pip install -r requirements.txt
 
-inside .env
+
+12. Create a .env file. This is where your GCP credentials will go.
+$ touch .env
+
+13. Open your .env file and copy the information below
+
 INSTANCE_CONNECTION_NAME="cs411-team002-ican:us-central1:cs411-team002-ican"
-(Change with your username)
-DB_USER="hannahk8"
-(Change with your password)
-DB_PASS="hannahk8"
+DB_USER="hannahk8" --- Replace this with your username
+DB_PASS="hannahk8" --- Replace this with your password
 DB_NAME="pokemon_battle_db"
 
 
-gcloud auth application-default login 
+14. Run the following command in your terminal:
+$ gcloud auth application-default login 
 
-cd backend
-python run.py
+15. Navigate to the backend folder
+$ cd backend
+
+16. Run the flask app!
+$ python run.py
 
 
+## Test your flask app
 
+1. Activate virtual environment
+$ source .venv/bin/activate
 
+2. Navigate to backend folder
+$ cd backend
 
-# maybe???? --> pip install urllib3==1.26.15
+3. Run flask app
+$ python run.py
