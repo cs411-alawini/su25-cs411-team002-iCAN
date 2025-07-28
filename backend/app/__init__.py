@@ -12,4 +12,6 @@ def create_app():
     from . import pokedex
     app.register_blueprint(pokedex.bp)
     
+     # Register any other blueprints
+    
     return app
