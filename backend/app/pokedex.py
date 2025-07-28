@@ -7,8 +7,9 @@ from flask import Blueprint
 bp = Blueprint('pokedex', __name__, url_prefix='/pokedex')
 
 # Create the endpoint at url_prefix='/pokedex'
-@bp.route('/', methods=(['GET']))
+@bp.route('/', methods=['GET'])
 def get_all_pokemon():
+    conn = None
     try:  
         # Get the database connection
         conn = getconn()
@@ -35,11 +36,13 @@ def get_all_pokemon():
     
     except Exception as e:
         print(f"There was an error fetching data: {e}")
+        return jsonify({"error": str(e)}), 500
   
     finally: 
         # Close the connection
-        conn.close()
-        print('Connection closed.')
+        if conn is not None:
+            conn.close()
+            print('Connection closed.')
 
 
 # Create the endpoint at url_prefix='/pokedex/1'
