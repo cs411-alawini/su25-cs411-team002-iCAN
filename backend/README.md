@@ -1,4 +1,5 @@
-# Testing on your computer
+# README for Team iCAN
+## Testing on your computer
 Below are instructions on how to test this on your computer. The code is written below and begins with a dollar sign ($). Do not copy the dollar sign. Please copy all the code after the dollar sign, but do not include the dollar sign in the code.
 
 1. Activate the virtual environment:
@@ -8,9 +9,7 @@ $ source .venv/bin/activate
 $
 
 
-cloud init
-cloud auth login
-clou
+
 3. Copy paste:
 export INSTANCE_CONNECTION_NAME="my-gcp-project:us-central1:my-sql-instance"
 export DB_USER="hannahk8"
@@ -23,16 +22,13 @@ $ cd backend
 6. Grab the key to our GCP 
 
 
-7. Download JSON and get the file directory
-$export GOOGLE_APPLICATION_CREDENTIALS="/Users/hannahkim/Desktop/CS 411 SU25/Pokemon Project/cs411-team002-ican-105b9158fa75.json"
+1. Navigate to this site: https://cloud.google.com/sdk/docs/install
 
-Run the flask debugging command:
-$ flask --app app --debug run
+2. Determine which version you have
+$ uname -m
 
-https://cloud.google.com/sdk/docs/install
-uname -m
+3. Download that platform's package
 
-download that platform's package
 
 cd to downloads
 tar -xf google-cloud-cli-darwin-arm.tar.gz
@@ -48,15 +44,16 @@ cd backend
 
 pip install -r requirements.txt
 
-go to root
+go to root folder
 touch .env
 
 inside .env
 INSTANCE_CONNECTION_NAME="cs411-team002-ican:us-central1:cs411-team002-ican"
-DB_USER=“hannahk8”
-DB_PASS=“hannahk8”
+(Change with your username)
+DB_USER="hannahk8"
+(Change with your password)
+DB_PASS="hannahk8"
 DB_NAME="pokemon_battle_db"
-
 
 
 gcloud auth application-default login 
