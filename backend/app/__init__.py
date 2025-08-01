@@ -11,6 +11,10 @@ def create_app():
     # Import and register the Pokedex blueprint
     from . import pokedex
     app.register_blueprint(pokedex.bp)
+
+    # Import and register the user_teams blueprint
+    from . import user_teams
+    app.register_blueprint(user_teams.bp)
     
      # Register any other blueprints
     
