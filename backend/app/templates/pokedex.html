@@ -11,6 +11,8 @@
         button { padding: 10px 15px; font-size: 16px; cursor: pointer; }
         table { width: 100%; border-collapse: collapse; box-shadow: 0 2px 3px rgba(0,0,0,0.1); }
         th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; }
+        /* Added style for the image */
+        td img { vertical-align: middle; } 
         thead th { background-color: #e74c3c; color: white; }
         tbody tr:nth-of-type(even) { background-color: #f9f9f9; }
         tbody tr:hover { background-color: #f1f1f1; }
@@ -29,6 +31,7 @@
     <table>
         <thead>
             <tr>
+                <th>Sprite</th> 
                 <th>#</th>
                 <th>Name</th>
                 <th>Type 1</th>
@@ -42,6 +45,7 @@
             {% if entries %}
                 {% for pokemon in entries %}
                     <tr>
+                        <td><img src="{{ pokemon.image_url }}" alt="{{ pokemon.name }} sprite" width="70"></td>
                         <td>{{ pokemon.pokedex_id }}</td>
                         <td>{{ pokemon.name }}</td>
                         <td>{{ pokemon.pType_1 }}</td>
@@ -53,6 +57,7 @@
                 {% endfor %}
             {% elif pokemon %}
                 <tr>
+                    <td><img src="{{ pokemon.image_url }}" alt="{{ pokemon.name }} sprite" width="70"></td>
                     <td>{{ pokemon.pokedex_id }}</td>
                     <td>{{ pokemon.name }}</td>
                     <td>{{ pokemon.pType_1 }}</td>
@@ -63,26 +68,11 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="7">No Pokedex entry found.</td>
+                    <td colspan="8">No Pokedex entry found.</td>
                 </tr>
             {% endif %}
         </tbody>
     </table>
 
     <script>
-        document.getElementById('search-form').addEventListener('submit', function(event) {
-            // Stop the form from submitting the default way
-            event.preventDefault(); 
-            
-            // Get the ID from the input box
-            const pokedexId = document.getElementById('pokedex-id-input').value;
-            
-            // Redirect the browser to the correct URL
-            if (pokedexId) {
-                window.location.href = '/pokedex/' + pokedexId;
-            }
-        });
-    </script>
-
-</body>
-</html>
+        document.getElementById('search-form').addEventListener('submit', function(event
