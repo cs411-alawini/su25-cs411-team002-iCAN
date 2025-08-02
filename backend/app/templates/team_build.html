@@ -146,43 +146,54 @@ homepage.css
 Hannah — 8:50 PM
 I will add these to my branch and push to main
 ﻿
+<!-- templates/build_team.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Build Your PokÃ©mon Team</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style/homepage.css') }}">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Build Your Pokémon Team</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/team.css') }}">
 </head>
+
 <body>
-  <div class="navbar">
-    <h2>GAME BUTTON</h2>
-    <button onclick="location.href='/team'">Team</button>
-    <button onclick="location.href='/gyms'">Gyms</button>
-    <button onclick="location.href='/pokedex'">Pokedex</button>
-    <button onclick="location.href='/badges'">Badges</button>
-  </div>
+  <header>Build Your First Pokémon Team!</header>
 
-  <div class="header">POKEMON RUSH! GO!</div>
-  
-  <div class="profile">
-    <h2>Check Your Profile</h2>
-    <button onclick="location.href='/logout'">Logout</button>
-    <button onclick="location.href='/profile'">Profile</button>
-  </div>
+  <div class="content-wrapper">
+    <div class="sidebar">
+      <h3>Pick Six Pokémon</h3>
+      {% for i in range(1, 7) %}
+      <label for="pokemon{{ i }}">Pokémon {{ i }}</label>
+      <input type="text" name="pokemon{{ i }}" id="pokemon{{ i }}" placeholder="Search..." />
+      {% endfor %}
+    </div>
 
-  <div class="main">
-    <div class="arena">
-      <div class="user">
-        <div class="user-shape"></div>
-        <div>user</div>
+    <div class="main-content">
+      <div class="team-name-container">
+        <div class="form-container">
+          <div class="form-row">
+            <label for="team_name">🎮 Team Name:</label>
+            <input type="text" id="team_name" placeholder="Enter team name" />
+            <button id="submit_team">💾 Save Team</button>
+          </div>
+
+          <div class="form-row">
+            <label for="team_status">🔥 Set Team Status:</label>
+            <input type="checkbox" id="team_status" name="is_active" value="1" />
+            <span class="checkbox-label">Is Active</span>
+          </div>
+        </div>
+
+        <div class="pokemon-preview" id="pokemon-preview">
+          <!-- JS will load selected Pokémon info here -->
+        </div>
       </div>
-      <div class="gym"></div>
-      <button class="enter-btn" onclick="alert('Entering Gym...')">Enter Gym</button>
     </div>
   </div>
-  <div class="footer">~~~~~ Enjoy The Game ~~~~</div>
+
+  <script src="{{ url_for('static', filename='js/team.js') }}"></script>
 </body>
 </html>
-homepage.html
+team_build.html
 2 KB
