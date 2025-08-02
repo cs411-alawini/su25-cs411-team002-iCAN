@@ -1,43 +1,16 @@
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    display: grid;
-    grid-template-columns: 200px 1fr 150px;
-    grid-template-rows: auto 1fr 50px;
-    grid-template-areas:
-        "navbar header profile"
-        "navbar main profile"
-        "footer footer footer";
-    height: 100vh;
+ body {
+     margin: 0;
+     font-family: Arial, sans-serif;
+     height: 100vh;
+ }
+ .content-wrapper {
+  display: flex;
+  flex-direction: row;
+  height: calc(100vh - 70px); /* minus header height */
 }
-
-.navbar {
-    grid-area: navbar;
-    background-color: #f3f3ff;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    border-right: 1px solid #ccc;
-}
-
-.navbar h2 {
-    text-align: center;
-    font-weight: bold;
-    color: #a078d3;
-    font-size: 16px;
-}
-
-.navbar button {
-    padding: 10px;
-    border: 2px solid #a078d3;
-    border-radius: 6px;
-    background-color: #ddd2f8;
-    cursor: pointer;
-}
-
-.header {
+header {
     grid-area: header;
+    width: 100%;
     background-color: #e9e8e9;
     color: #a078d3;
     font-weight: bold;
@@ -46,119 +19,155 @@ body {
     padding: 10px;
     font-size: 2rem;
     border-bottom: 1px solid #ccc;
-    height: 100px;
+    height: 70px;
     /* Flexbox for vertical + horizontal centering */
     display: flex;
     justify-content: center;
     align-items: center;
 
 }
+ .sidebar {
+     margin-top: 30px;
+     margin-left: 30px;
+     margin-bottom: 100px;
+     width: 300px;
+     background-color: #fff6ff;
+     border: 3px solid #d48af7;
+     padding: 20px;
+     border-radius: 20px;
+     font-family: 'Verdana', sans-serif;
+     box-shadow: 0 0 12px rgba(211, 143, 255, 0.3);
+ }
 
-.profile {
-    grid-area: profile;
-    background-color: #f3f3ff;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    border-left: 1px solid #ccc;
-}
+ .sidebar h3 {
+     margin-top: 0;
+     color: rgb(230, 88, 218);
+     font-weight: bold;
+ }
 
-.profile h2 {
-    text-align: center;
-    font-weight: bold;
-    color: #a078d3;
-    font-size: 16px;
-}
+ .sidebar label {
+     display: block;
+     margin-top: 15px;
+     font-weight: bold;
+ }
 
-.profile button {
-    padding: 10px;
-    border: 2px solid #a078d3;
-    border-radius: 6px;
-    background-color: #ddd2f8;
-    cursor: pointer;
-}
+ .sidebar input[type="text"] {
+     width: 100%;
+     padding: 8px;
+     margin-top: 5px;
+     box-sizing: border-box;
+ }
 
-.main {
-    grid-area: main;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-}
+ .main-content {
+     padding: 30px;
+     background-color: #ffffff;
+     overflow-y: auto;
+ }
 
-.arena {
-    border: 2px solid black;
-    width: 500px;
-    height: 300px;
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    padding: 20px;
-}
+ .team-name-container {
+     margin-bottom: 30px;
+ }
 
-.user {
-    text-align: center;
-    color: darkgreen;
-}
+ .team-name-container input {
+     padding: 8px;
+     font-size: 16px;
+     width: 300px;
+ }
 
-.user-shape {
-    width: 0;
-    height: 0;
-    border-left: 40px solid transparent;
-    border-right: 40px solid transparent;
-    border-bottom: 70px solid darkgreen;
-    margin: auto;
-    position: relative;
-}
+ .team-name-container button {
+     padding: 8px;
+     font-size: 16px;
+     color: rgb(202, 38, 227);
+     width: fit-content;
+ }
 
-.user-shape::before {
-    content: '';
-    position: absolute;
-    top: -30px;
-    left: -20px;
-    width: 40px;
-    height: 40px;
-    background-color: darkgreen;
-    border-radius: 50%;
-}
+ .pokemon-preview {
+     display: flex;
+     flex-wrap: wrap;
+     gap: 20px;
+ }
 
-.gym {
-    width: 150px;
-    height: 100px;
-    border: 2px solid black;
-    position: relative;
-}
+ .pokemon-card {
+     width: 200px;
+     border: 1px solid #ccc;
+     padding: 10px;
+     border-radius: 10px;
+     text-align: center;
+ }
 
-.gym::before {
-    content: '';
-    position: absolute;
-    top: -50px;
-    left: 0;
-    width: 0;
-    height: 0;
-    border-left: 75px solid transparent;
-    border-right: 75px solid transparent;
-    border-bottom: 50px solid black;
-}
+ .pokemon-card img {
+     width: 100px;
+     height: 100px;
+ }
 
-.enter-btn {
-    position: absolute;
-    bottom: 10px;
-    right: 30px;
-    padding: 10px 20px;
-    background-color: #ffe6cc;
-    border: 2px solid #ffa366;
-    border-radius: 50px;
-    color: #663300;
-    cursor: pointer;
-}
+ .move-list {
+     list-style: none;
+     padding-left: 0;
+ }
 
-.footer {
-      grid-area: footer;
-      text-align: center;
-      padding: 10px;
-      background-color: #e6e6e6;
-      border-top: 1px solid #ccc;
-    }
+ .form-container {
+     margin-left: 120px;
+     max-width: 600px;
+     background-color: #fff6ff;
+     border: 3px solid #d48af7;
+     padding: 20px;
+     border-radius: 20px;
+     font-family: 'Verdana', sans-serif;
+     box-shadow: 0 0 12px rgba(211, 143, 255, 0.3);
+     margin-top: 30px;
+ }
+
+ .form-row {
+     display: flex;
+     align-items: center;
+     margin-bottom: 20px;
+     gap: 12px;
+ }
+
+ .form-row label {
+     width: 150px;
+     font-weight: bold;
+     color: #6b2fa1;
+     font-size: 1.1rem;
+     white-space: nowrap;
+ }
+
+ .form-row input[type="text"] {
+     flex: 1;
+     padding: 10px;
+     border: 2px solid #c292f5;
+     border-radius: 10px;
+     font-size: 1rem;
+     background-color: #fff;
+ }
+
+ .form-row input[type="text"]:focus {
+     outline: none;
+     border-color: #a84dff;
+     box-shadow: 0 0 6px #da9bff;
+ }
+
+ .form-row button {
+     padding: 10px 16px;
+     background-color: #f5ebff;
+     border: 2px solid #a84dff;
+     border-radius: 10px;
+     color: #a84dff;
+     font-weight: bold;
+     cursor: pointer;
+     transition: background-color 0.2s ease;
+ }
+
+ .form-row button:hover {
+     background-color: #e0c7ff;
+ }
+
+ .form-row input[type="checkbox"] {
+     transform: scale(2);
+ }
+
+ .checkbox-label {
+     font-size: 1.1rem;
+     color: #6b2fa1;
+     font-weight: bold;
+ }
