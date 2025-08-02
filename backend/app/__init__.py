@@ -9,9 +9,9 @@ def create_app():
     app = Flask(__name__)
     
     # Import and register the Pokedex blueprint
-    from . import pokedex
+    from . import pokedex, auth
     app.register_blueprint(pokedex.bp)
+    app.register_blueprint(auth.bp)
     
-     # Register any other blueprints
     
     return app
