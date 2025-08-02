@@ -1,16 +1,20 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, Blueprint
 from datetime import datetime
 import sqlite3
 import random
 
-app = Flask(__name__)
+# Routes will go here e.g. @bp.route('/')
+bp = Blueprint('battles', __name__, url_prefix='/battle', template_folder='templates')
+
 
 def get_db_connection():
     conn = sqlite3.connect('your_database.db')
     conn.row_factory = sqlite3.Row
     return conn
 
-@app.route('/battle/start', methods=['GET', 'POST'])
+
+
+@bp.route('/start', methods=['GET', 'POST'])
 def start_battle():
     conn = get_db_connection()
 
@@ -63,7 +67,7 @@ def start_battle():
 
         conn.close()
 
-        return render_template("battle_start.html",
+        return render_template("battle.html",
                                user_teams=user_teams,
                                gyms=gyms,
                                user_team=user_team,
@@ -78,7 +82,7 @@ def start_battle():
 
     # GET request
     conn.close()
-    return render_template("battle_start.html",
+    return render_template("battle.html",
                            user_teams=user_teams,
                            gyms=gyms,
                            user_team=user_team,

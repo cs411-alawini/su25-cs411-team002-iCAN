@@ -1,24 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-  <meta charset="UTF-8">
-  <title>Start a New Battle</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style/battle.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style/table.css') }}">
-</head>
+<!-- Tab title -->
+{% block title %}Start a New Battle{% endblock %}
 
-<body>
+<!-- For login HTML body -->    
+{% block content %}
+
+<div class="battle_body">
+  <button id="home_button" type="button" onclick="location.href='/home'">Back to Homepage</button>
   <h1>Start a New Battle</h1>
 
-  <div class="form-container">
+  <div id="form-container">
     <form method="POST">
       <div class="form-row">
         <label for="battle_id">Battle ID:</label>
         <input type="text" id="battle_id" name="battle_id" required>
       </div>
 
-      <div class="form-row">
+      <div id="form-row">
         <label for="user_team_id">Select Your Team:</label>
         <select name="user_team_id" id="user_team_id" required><!--Pay Attention-->
           {% for team in user_teams %}
@@ -29,7 +28,7 @@
         </select>
       </div>
 
-      <div class="form-row">
+      <div id="form-row">
         <label for="gym_id">Select Gym:</label>
         <select name="gym_id" id="gym_id" required><!--Pay Attention-->
           {% for gym in gyms %}
@@ -83,8 +82,6 @@
     </table>
   </div>
   {% endif %}
-<!--Pay Attention the page name for returning-->
-  <a href="/poke_team_members" class="back-link">&larr; Back to Poke Team Members Selection</a>
-</body>
 
-</html>
+</div>
+{% endblock %}

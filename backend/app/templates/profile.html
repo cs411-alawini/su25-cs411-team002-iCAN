@@ -9,15 +9,10 @@
     <!-- Left hand side -->
     <div class="left_summary">
         <div id="user_image">
-
-
+            <img id="user_image" src="{{ url_for('static', filename='user_img.webp') }}" alt="User image">
         </div>
-        <div id="username_display">Username
-
-        </div>
-        <div id="badge_status">Badge Level
-
-        </div>
+        <div id="username_display">{{ user }}</div>
+        <div id="badge_status">Badge Level: {{ badge_level }}</div>
     </div>
 
     <!-- Navbar top -->
@@ -28,7 +23,7 @@
     <!-- Top area -->
     <div class="top_user_info">
         <dl>
-            <dt>Username: </dt>
+            <dt>Username: {{ user }}</dt>
             <dt>Email: </dt>
         </dl>
     </div>

@@ -47,7 +47,6 @@
     font-size: 2rem;
     border-bottom: 1px solid #ccc;
     height: 100px;
-    /* Flexbox for vertical + horizontal centering */
     display: flex;
     justify-content: center;
     align-items: center;

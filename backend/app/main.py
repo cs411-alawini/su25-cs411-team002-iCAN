@@ -26,8 +26,8 @@ def load_homepage():
     The user has logged in or signed up for the game and is now brought
         to the Pokemon Boss Rush Homepage.
     """
-
-    return render_template('homepage.html')
+    username = session.get('username')
+    return render_template('homepage.html', user=username)
 
 # Create the endpoint at url_prefix='/profile'
 @bp.route('/profile', methods=['POST','GET'])
@@ -35,8 +35,8 @@ def load_profile():
     """
     The user has clicked the Profile button from the homepage
     """
-
-    return render_template('profile.html')
+    username = session.get('username')
+    return render_template('profile.html', user=username, badge_level="badge level")
 
 # Create the endpoint at url_prefix='/teams'
 @bp.route('/teams', methods=['POST','GET'])
@@ -46,4 +46,13 @@ def load_teams():
     """
 
     return render_template('team_build.html')
+
+# Create the endpoint at url_prefix='/battle'
+@bp.route('/battle', methods=['POST','GET'])
+def load_battle():
+    """
+    The user has clicked the Enter Gym button from the homepage
+    """
+
+    return render_template('battle.html')
 

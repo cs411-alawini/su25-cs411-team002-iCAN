@@ -22,7 +22,7 @@
 }
 
 #user_image {
-    border: solid black;
+    max-height: 300px;
 }
 
 
