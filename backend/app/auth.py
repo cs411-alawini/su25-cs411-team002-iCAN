@@ -1,11 +1,11 @@
-from flask import jsonify, render_template, Blueprint, request, session
+from flask import jsonify, render_template, Blueprint, request, session, redirect, url_for
 from app.db import getconn
 
 
-# Routes will go here e.g. @bp.route('/login')
-bp = Blueprint('login', __name__, url_prefix='/login', template_folder='templates')
+# Routes will go here e.g. @bp.route('/auth')
+bp = Blueprint('auth', __name__, url_prefix='/auth', template_folder='templates')
 
-# Create the endpoint at url_prefix='/login'
+# Create the endpoint at url_prefix='/auth'
 @bp.route('/', methods=['POST','GET'])
 def login():
     """
@@ -22,45 +22,55 @@ def login():
         password = request.form.get('pwd')
         email = request.form.get('email')
     
-        # Setup to connect to GCP and to write SQL
+        # Setup to connect to GCP
         db_conn = getconn()
-        sql_cursor = db_conn.cursor()
+ 
 
-        # User initiated SIGN UP
-        if form_type == 'signup':
-            # Check if user already exists
-            check_user_query = "SELECT * FROM Users WHERE user_name = %s"
-            sql_cursor.execute(check_user_query, (username,))
-            existing_username = sql_cursor.fetchone()
+        try:
+            # Open "context manager" for sql_cursor (auto-ends)
+            with db_conn.cursor() as sql_cursor:
+            
+                # Set isolation level - we do not want write-write conflicts
+                # There should only be unique usernames
+                sql_cursor.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;")
 
-            if existing_username:
-                return "Username already exists."
+                # User initiated SIGN UP
+                if form_type == 'signup':
+                    # Check if user already exists
+                    check_user_query = "SELECT * FROM users WHERE user_name = %s"
+                    sql_cursor.execute(check_user_query, (username,))
+                    existing_username = sql_cursor.fetchone()
 
-            # Insert new user
-            new_user_query = "INSERT INTO Users (user_name, pwd) VALUES (%s, %s)"
-            sql_cursor.execute(new_user_query, (username, password))
-            db_conn.commit()
-            return "Signup successful! Please log in."
+                    if existing_username:
+                        return "Username already exists."
 
-
-        # User initiated LOGIN
-        elif form_type == 'login':
-
-            # Check if username already exists
-            check_user_query = "SELECT * FROM Users WHERE user_name = %s AND pwd = %s"
-            sql_cursor.execute(check_user_query, (username, password))
-            existing_user = sql_cursor.fetchone()
-
-            if existing_user:
-                session['username'] = username
-                return redirect(url_for('main.homepage'))
-            else:
-                return "Incorrect username or password."
-        
-        else:
-            return "Unknown form type was submitted."
+                    # Insert new user using the STORED PROCEDURE AddNewUser
+                    new_user_query = "INSERT INTO users (user_name, pwd, email, is_active) VALUES (%s, %s, %s, %s)"
+                    sql_cursor.execute(new_user_query, (username, password, email, 1))
+                    db_conn.commit()
+                    print("Signup successful! Please log in.") 
+                    return redirect(url_for('home.load_homepage'))
 
 
+                # User initiated LOGIN
+                elif form_type == 'login':
+                    # Check if username already exists
+                    check_user_query = "SELECT * FROM users WHERE user_name = %s AND pwd = %s"
+                    sql_cursor.execute(check_user_query, (username, password))
+                    existing_user = sql_cursor.fetchone()
+
+                    if existing_user:
+                        session['username'] = username
+                        return redirect(url_for('home.load_homepage'))
+                    else:
+                        return "Incorrect username or password."
+                
+                else:
+                    return "Unknown form type was submitted."
+
+            # Close connection to GCP
+        finally:
+            db_conn.close()
     return render_template('login.html')
 
  

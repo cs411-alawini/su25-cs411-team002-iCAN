@@ -1,65 +1,48 @@
+{% extends "base.html" %}
 
-<!-- templates/build_team.html -->
-<!DOCTYPE html>
-<html lang="en">
+<!-- Tab title -->
+{% block title %}Teams{% endblock %}
 
-<head>
-    <meta charset="UTF-8" />
+<!-- For login HTML body -->    
+{% block content %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Build Your Pokemon Team</title>
+<div class="teams_body">
 
-
-<!-- templates/build_team.html -->
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Build Your Pokémon Team</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style/team.css') }}">
-</head>
-
-<body>
-  <header>Build Your First Pokémon Team!</header>
-
-  <div class="content-wrapper">
-    <div class="sidebar">
-      <h3>Pick Six Pokémon</h3>
-      {% for i in range(1, 7) %}
-      <label for="pokemon{{ i }}">Pokémon {{ i }}</label>
-      <input type="text" name="pokemon{{ i }}" id="pokemon{{ i }}" placeholder="Search..." />
-      {% endfor %}
-    </div>
-
-    <div class="main-content">
-      <div class="team-name-container">
-        <div class="form-container">
-          <div class="form-row">
-            <label for="team_name">🎮 Team Name:</label>
-            <input type="text" id="team_name" placeholder="Enter team name" />
-            <button id="submit_team">💾 Save Team</button>
-          </div>
-
-          <div class="form-row">
-            <label for="team_status">🔥 Set Team Status:</label>
-            <input type="checkbox" id="team_status" name="is_active" value="1" />
-            <span class="checkbox-label">Is Active</span>
-          </div>
-        </div>
-
-        <div class="pokemon-preview" id="pokemon-preview">
-          <!-- JS will load selected Pokémon info here -->
-        </div>
-      </div>
-    </div>
+  <div class="top_navbar">
+        <button type="button" onclick="location.href='/home'">Back to Homepage</button>
+  </div>
+  
+  <div class="teams_header">
+    <header>Build Your First Pokémon Team!</header>
+  </div>
+  
+  <div class="pick_team_name">
+    <form id="set_team_name">
+      <label for="team_name">🎮 Team Name:</label>
+      <input type="text" id="team_name" placeholder="Enter team name" />
+      <button id="submit_team">💾 Save Team</button>
+      <br>
+      <label for="team_status">🔥 Set Team Status:</label>
+      <input type="checkbox" id="team_status" name="is_active" value="1" />
+      <span class="checkbox-label">Is Active</span>
+    </form>
+  </div>
+  
+  <div class="pick_pokemon">
+    <h3>Pick Six Pokémon</h3>
+    {% for i in range(1, 7) %}
+    <label for="pokemon{{ i }}">Pokémon {{ i }}</label>
+    <input type="text" name="pokemon{{ i }}" id="pokemon{{ i }}" placeholder="Search..." />
+    <button id="search_poke{{ i }}">Search</button>
+    <br><br>
+    {% endfor %}
   </div>
 
-  <script src="{{ url_for('static', filename='js/team.js') }}"></script>
-</body>
-</html>
+  
+  <div class="display_pokemon">
+
+  </div>
+
+</div>
+  
+{% endblock %}

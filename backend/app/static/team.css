@@ -1,15 +1,22 @@
- body {
-     margin: 0;
-     font-family: Arial, sans-serif;
-     height: 100vh;
- }
- .content-wrapper {
-  display: flex;
-  flex-direction: row;
-  height: calc(100vh - 70px); /* minus header height */
+.teams_body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    height: calc(100vh - 70px); 
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: .30px 1fr 1fr 3fr;
+    gap: 30px;
+    padding: 30px;
+    box-sizing: border-box;
 }
-header {
-    grid-area: header;
+
+.teams_body .top_navbar {
+    grid-row: 1;
+    grid-column: 1 /span 2;
+
+}
+
+.teams_header  {
     width: 100%;
     background-color: #e9e8e9;
     color: #a078d3;
@@ -19,155 +26,40 @@ header {
     padding: 10px;
     font-size: 2rem;
     border-bottom: 1px solid #ccc;
-    height: 70px;
-    /* Flexbox for vertical + horizontal centering */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
+    margin: auto;
+    grid-row: 2;
+    grid-column: 1 / span 2;
 }
- .sidebar {
-     margin-top: 30px;
-     margin-left: 30px;
-     margin-bottom: 100px;
-     width: 300px;
-     background-color: #fff6ff;
-     border: 3px solid #d48af7;
-     padding: 20px;
-     border-radius: 20px;
-     font-family: 'Verdana', sans-serif;
-     box-shadow: 0 0 12px rgba(211, 143, 255, 0.3);
- }
 
- .sidebar h3 {
-     margin-top: 0;
-     color: rgb(230, 88, 218);
-     font-weight: bold;
- }
 
- .sidebar label {
-     display: block;
-     margin-top: 15px;
-     font-weight: bold;
- }
+.teams_body .pick_team_name {
+    grid-area: main;
+    background-color: #ffffff;
+    padding: 30px;
+    grid-row: 3;
+    grid-column: 1;
+    box-sizing: border-box;
+}
 
- .sidebar input[type="text"] {
-     width: 100%;
-     padding: 8px;
-     margin-top: 5px;
-     box-sizing: border-box;
- }
+.teams_body .pick_pokemon {
+    grid-area: sidebar;
+    background-color: #fff6ff;
+    border: 3px solid #d48af7;
+    padding: 20px;
+    border-radius: 20px;
+    font-family: 'Verdana', sans-serif;
+    box-shadow: 0 0 12px rgba(211, 143, 255, 0.3);
+    height: fit-content;
+    grid-row: 4;
+    grid-column: 1;
+}
 
- .main-content {
-     padding: 30px;
-     background-color: #ffffff;
-     overflow-y: auto;
- }
+.teams_body .pick_pokemon h3 {
+    text-align: center;
+}
 
- .team-name-container {
-     margin-bottom: 30px;
- }
-
- .team-name-container input {
-     padding: 8px;
-     font-size: 16px;
-     width: 300px;
- }
-
- .team-name-container button {
-     padding: 8px;
-     font-size: 16px;
-     color: rgb(202, 38, 227);
-     width: fit-content;
- }
-
- .pokemon-preview {
-     display: flex;
-     flex-wrap: wrap;
-     gap: 20px;
- }
-
- .pokemon-card {
-     width: 200px;
-     border: 1px solid #ccc;
-     padding: 10px;
-     border-radius: 10px;
-     text-align: center;
- }
-
- .pokemon-card img {
-     width: 100px;
-     height: 100px;
- }
-
- .move-list {
-     list-style: none;
-     padding-left: 0;
- }
-
- .form-container {
-     margin-left: 120px;
-     max-width: 600px;
-     background-color: #fff6ff;
-     border: 3px solid #d48af7;
-     padding: 20px;
-     border-radius: 20px;
-     font-family: 'Verdana', sans-serif;
-     box-shadow: 0 0 12px rgba(211, 143, 255, 0.3);
-     margin-top: 30px;
- }
-
- .form-row {
-     display: flex;
-     align-items: center;
-     margin-bottom: 20px;
-     gap: 12px;
- }
-
- .form-row label {
-     width: 150px;
-     font-weight: bold;
-     color: #6b2fa1;
-     font-size: 1.1rem;
-     white-space: nowrap;
- }
-
- .form-row input[type="text"] {
-     flex: 1;
-     padding: 10px;
-     border: 2px solid #c292f5;
-     border-radius: 10px;
-     font-size: 1rem;
-     background-color: #fff;
- }
-
- .form-row input[type="text"]:focus {
-     outline: none;
-     border-color: #a84dff;
-     box-shadow: 0 0 6px #da9bff;
- }
-
- .form-row button {
-     padding: 10px 16px;
-     background-color: #f5ebff;
-     border: 2px solid #a84dff;
-     border-radius: 10px;
-     color: #a84dff;
-     font-weight: bold;
-     cursor: pointer;
-     transition: background-color 0.2s ease;
- }
-
- .form-row button:hover {
-     background-color: #e0c7ff;
- }
-
- .form-row input[type="checkbox"] {
-     transform: scale(2);
- }
-
- .checkbox-label {
-     font-size: 1.1rem;
-     color: #6b2fa1;
-     font-weight: bold;
- }
+.teams_body .display_pokemon {
+    border: solid black;
+    grid-row: 3 / span 4;
+    grid-column: 2;
+}

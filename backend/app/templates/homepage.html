@@ -1,16 +1,14 @@
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Build Your PokÃ©mon Team</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style/homepage.css') }}">
-</head>
-<body>
+<!-- Tab title -->
+{% block title %}Pokemon Boss Rush{% endblock %}
+
+<!-- For login HTML body -->    
+{% block content %}
+<div class="homepage">
   <div class="navbar">
-    <h2>GAME BUTTON</h2>
-    <button onclick="location.href='/team'">Team</button>
+    <h2>GAME NAVIGATION</h2>
+    <button onclick="location.href='/teams'">Teams</button>
     <button onclick="location.href='/gyms'">Gyms</button>
     <button onclick="location.href='/pokedex'">Pokedex</button>
     <button onclick="location.href='/badges'">Badges</button>
@@ -20,7 +18,7 @@
   
   <div class="profile">
     <h2>Check Your Profile</h2>
-    <button onclick="location.href='/logout'">Logout</button>
+    <button onclick="location.href='/auth/'">Logout</button>
     <button onclick="location.href='/profile'">Profile</button>
   </div>
 
@@ -35,5 +33,5 @@
     </div>
   </div>
   <div class="footer">~~~~~ Enjoy The Game ~~~~</div>
-</body>
-</html>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+<!-- Tab title -->
+{% block title %}Profile{% endblock %}
+
+<!-- For login HTML body -->    
+{% block content %}
+<div class="profile_container">
+    <!-- Left hand side -->
+    <div class="left_summary">
+        <div id="user_image">
+
+
+        </div>
+        <div id="username_display">Username
+
+        </div>
+        <div id="badge_status">Badge Level
+
+        </div>
+    </div>
+
+    <!-- Navbar top -->
+    <div class="top_navbar">
+        <button type="button" onclick="location.href='/home'">Back to Homepage</button>
+    </div>
+    <!-- To the right of left_summary-->
+    <!-- Top area -->
+    <div class="top_user_info">
+        <dl>
+            <dt>Username: </dt>
+            <dt>Email: </dt>
+        </dl>
+    </div>
+
+    <!-- Bottom area -->
+    <div class="game_stats">
+        <dl>
+            <dt>Win/Loss Rate: </dt>
+            <dt>Average Battle Time: </dt>
+            <dt>Badges Earned: </dt>
+        </dl>
+    </div>
+        
+    <div class="delete_account">
+        <button>Delete Account</button>
+    </div>
+
+
+    
+{% endblock %}
+
