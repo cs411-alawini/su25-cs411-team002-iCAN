@@ -15,6 +15,12 @@ def create_app():
     # Import and register the user_teams blueprint
     from . import user_teams
     app.register_blueprint(user_teams.bp)
+
+    # Import and register the user_teams blueprint
+    from . import user_poke_team_members
+    app.register_blueprint(user_poke_team_members.bp)
+
+
     
      # Register any other blueprints
     

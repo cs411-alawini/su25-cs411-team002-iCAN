@@ -21,23 +21,8 @@
         th {
             background-color: #eee;
         }
-        h1, h2 {
+        h1 {
             margin-bottom: 20px;
-        }
-        form {
-            margin-bottom: 40px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-        }
-        input[type="text"] {
-            width: 300px;
-            padding: 8px;
-            margin-bottom: 12px;
-        }
-        input[type="submit"] {
-            padding: 8px 16px;
         }
         .back-link {
             margin-top: 20px;
@@ -47,18 +32,8 @@
 </head>
 <body>
 
-    <h1>User Teams</h1>
-
-    <!-- Create New Team Form -->
-    <h2>Create a New Team</h2>
-    <form action="/user-teams/create" method="post">
-        <label for="team_name">Team Name:</label>
-        <input type="text" id="team_name" name="team_name" required>
-        <input type="submit" value="Create Team">
-    </form>
-
     {% if entries %}
-        <h2>All Teams</h2>
+        <h1>All User Teams</h1>
         <table>
             <thead>
                 <tr>
@@ -77,8 +52,9 @@
                 {% endfor %}
             </tbody>
         </table>
+
     {% elif user_team %}
-        <h2>Team Details</h2>
+        <h1>User Team Details</h1>
         <table>
             <tbody>
                 {% for key, value in user_team.items() %}
@@ -90,8 +66,9 @@
             </tbody>
         </table>
         <a href="/user-teams" class="back-link">← Back to All Teams</a>
+
     {% else %}
-        <p>No team data available.</p>
+        <p>No user team data found.</p>
     {% endif %}
 
 </body>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Pokémon</title>
+</head>
+<body>
+    <h1>Edit Team Member</h1>
+
+    <form action="/user-poke-team-members/update" method="post">
+        <input type="hidden" name="user_team_id" value="{{ member.user_team_id }}">
+        <input type="hidden" name="user_team_member_id" value="{{ member.user_team_member_id }}">
+
+        <p>Pokémon: {{ pokemon.name }}</p>
+        <img src="{{ pokemon.image_url }}" height="100"><br><br>
+
+        {% for i in range(1, 5) %}
+            <label for="move_{{ i }}_id">Move {{ i }}:</label>
+            <select name="move_{{ i }}_id" required>
+                {% for move in legal_moves %}
+                    <option value="{{ move.move_id }}"
+                        {% if move.move_id == member["move_" ~ i ~ "_id"] %}selected{% endif %}>
+                        {{ move.move_name }} (PP: {{ move.pp }})
+                    </option>
+                {% endfor %}
+            </select><br><br>
+        {% endfor %}
+
+        <input type="submit" value="Update Team Member">
+        <a href="/user-poke-team-members">Cancel</a>
+    </form>
+</body>
+</html>
