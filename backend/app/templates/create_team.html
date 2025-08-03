@@ -8,7 +8,8 @@
   <div class="create_teams_body">
 
     <div class="top_navbar">
-          <button type="button" onclick="location.href='/home'">Back to Homepage</button>
+      <button type="button" onclick="location.href='/home'">Back to Homepage</button>
+      <button type="button" onclick="location.href='/teams'">Back to Teams</button>
     </div>
     
     <div class="teams_header">
@@ -71,10 +72,10 @@
     </div>
 
   </div> <!-- end create_teams_body -->
-</div> <!-- end page_wrapper -->
+</div> <!-- end create_team_wrapper -->
 
+{% if team_name %}
 <script>
-  {% if team_name %}
   document.getElementById('edit_team').addEventListener('click', function() {
     const input = document.getElementById('team_name');
     const saveButton = document.getElementById('submit_team');
@@ -83,6 +84,7 @@
     saveButton.disabled = false;
     input.focus();
   });
-  {% endif %}
 </script>
+{% endif %}
+
 {% endblock %}

@@ -6,7 +6,7 @@ from datetime import datetime
 import sqlite3
 import random
 
-# Routes will go here e.g. @bp.route('/')
+# Routes will go here e.g. @bp.route('/battle')
 bp = Blueprint('battles', __name__, url_prefix='/battle', template_folder='templates')
 
 
@@ -70,7 +70,7 @@ def start_battle():
 
         conn.close()
 
-        return render_template("battle.html",
+        return render_template("battle_home.html",
                                user_teams=user_teams,
                                gyms=gyms,
                                user_team=user_team,
@@ -85,7 +85,7 @@ def start_battle():
 
     # GET request
     conn.close()
-    return render_template("battle.html",
+    return render_template("battle_home.html",
                            user_teams=user_teams,
                            gyms=gyms,
                            user_team=user_team,

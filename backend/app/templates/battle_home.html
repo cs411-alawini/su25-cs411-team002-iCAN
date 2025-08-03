@@ -13,6 +13,7 @@
       <div class="form-row">
         <label for="user_team_id">Select Your Team:</label>
         <select name="user_team_id" id="user_team_id" required>
+          <option value="" disabled {% if not selected_user_team_id %}selected{% endif %}>Select your team...</option>
           {% for team in user_teams %}
             <option value="{{ team.user_team_id }}" {% if selected_user_team_id == team.user_team_id %}selected{% endif %}>
               {{ team.team_name }}
@@ -25,6 +26,7 @@
       <div class="form-row">
         <label for="gym_id">Select Gym Leader:</label>
         <select name="gym_id" id="gym_id" required>
+          <option value="" disabled {% if not selected_gym_id %}selected{% endif %}>Select a gym leader...</option>
           {% for gym in gyms %}
             <option value="{{ gym.gym_id }}" {% if selected_gym_id == gym.gym_id %}selected{% endif %}>
               {{ gym.gym_leader }}

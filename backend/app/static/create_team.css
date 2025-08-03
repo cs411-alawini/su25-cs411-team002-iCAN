@@ -29,7 +29,15 @@
 
 .create_team_wrapper .create_teams_body .top_navbar {
   grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;   /* stack vertically */
+  align-items: flex-end;    /* align buttons to right */
+  gap: 10px;                /* space between buttons */
+  padding-bottom: 10px;     /* small spacing below */
+  /* remove any big height or margin that might add extra space */
+  height: auto;
 }
+
 
 .create_team_wrapper .create_teams_body .teams_header {
   grid-column: 1 / -1;

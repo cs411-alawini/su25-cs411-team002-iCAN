@@ -19,6 +19,9 @@ def root():
     else:
         return redirect(url_for('home.load_homepage'))
 
+
+
+
 # Create the endpoint at url_prefix='/home'
 @bp.route('/home', methods=['POST','GET'])
 def load_homepage():
@@ -28,6 +31,9 @@ def load_homepage():
     """
     username = session.get('username')
     return render_template('homepage.html', user=username)
+
+
+
 
 # Create the endpoint at url_prefix='/profile'
 @bp.route('/profile', methods=['POST','GET'])
@@ -123,21 +129,21 @@ def load_profile():
 
 
 
+
+
+
 # Create the endpoint at url_prefix='/teams'
 @bp.route('/teams', methods=['POST','GET'])
 def load_teams():
     """
     The user has clicked the Teams button from the homepage
     """
-
     # Username should already be stored in session
     username = session.get('username')
-
 
      # Setup to connect to GCP
     db_conn = getconn()
  
-
     try:
         # Open "context manager" for sql_cursor (auto-ends)
         with db_conn.cursor() as sql_cursor:
@@ -148,9 +154,13 @@ def load_teams():
 
 
             # Get the user's pokemon for each team
+            # Use LEFT JOIN to handle when users create teams BUT
+            # do not add any pokemon
             get_team_pokemons = """
                 SELECT UT.user_team_id, UT.team_name, PE.name AS pokedex_name
-                FROM users U NATURAL JOIN user_teams UT JOIN user_poke_team_members UTP ON UT.user_team_id = UTP.user_team_id JOIN pokedex_entries PE ON PE.pokedex_id = UTP.pokedex_id 
+                FROM users U NATURAL JOIN user_teams UT 
+                LEFT JOIN user_poke_team_members UTP ON UT.user_team_id = UTP.user_team_id 
+                LEFT JOIN pokedex_entries PE ON PE.pokedex_id = UTP.pokedex_id 
                 WHERE U.user_name LIKE %s;
             """ 
             sql_cursor.execute(get_team_pokemons, (f"%{username}%", ))
@@ -177,6 +187,7 @@ def load_teams():
 
     teams_data = list(teams_map.values())
     return render_template('teams_home.html', teams=teams_data)
+
 
 
 
@@ -227,12 +238,15 @@ def load_battle():
         db_conn.close()
 
     return render_template(
-        'battle.html',
+        'battle_home.html',
         user_teams=user_teams,
         gyms=gym_leaders,
         selected_user_team_id=selected_user_team_id,
         selected_gym_id=selected_gym_id
     )
+
+
+
 
 
 # Create the endpoint at url_prefix='/badges'
