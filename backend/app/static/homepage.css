@@ -11,7 +11,7 @@
     height: 100vh;
 }
 
-.homepage  .navbar {
+.homepage .navbar {
     grid-area: navbar;
     background-color: #f3f3ff;
     padding: 10px;
@@ -21,14 +21,14 @@
     border-right: 1px solid #ccc;
 }
 
-.homepage  .navbar h2 {
+.homepage .navbar h2 {
     text-align: center;
     font-weight: bold;
     color: #a078d3;
     font-size: 16px;
 }
 
-.homepage  .navbar button {
+.homepage .navbar button {
     padding: 10px;
     border: 2px solid #a078d3;
     border-radius: 6px;
@@ -36,7 +36,7 @@
     cursor: pointer;
 }
 
-.homepage  .header {
+.homepage .header {
     grid-area: header;
     background-color: #e9e8e9;
     color: #a078d3;
@@ -50,10 +50,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-
 }
 
-.homepage  .profile {
+.homepage .profile {
     grid-area: profile;
     background-color: #f3f3ff;
     padding: 10px;
@@ -63,14 +62,14 @@
     border-left: 1px solid #ccc;
 }
 
-.homepage  .profile h2 {
+.homepage .profile h2 {
     text-align: center;
     font-weight: bold;
     color: #a078d3;
     font-size: 16px;
 }
 
-.homepage  .profile button {
+.homepage .profile button {
     padding: 10px;
     border: 2px solid #a078d3;
     border-radius: 6px;
@@ -78,7 +77,7 @@
     cursor: pointer;
 }
 
-.homepage  .main {
+.homepage .main {
     grid-area: main;
     display: flex;
     justify-content: center;
@@ -86,7 +85,7 @@
     position: relative;
 }
 
-.homepage  .arena {
+.homepage .arena {
     border: 2px solid black;
     width: 500px;
     height: 300px;
@@ -97,36 +96,46 @@
     padding: 20px;
 }
 
-.homepage  .user {
+.homepage .user {
     text-align: center;
 }
 
+/* User image container */
 .homepage .user-image {
-    /* Optional container styles */
-    width: 120px;        /* fixed container width */
-    height: auto;        /* let height auto adjust */
-    margin: 0 auto 10px; /* center horizontally and space below */
+    width: 120px;
+    height: auto;
+    margin: 0 auto 10px;
 }
 
 .homepage .user-image img {
-    width: 100%;       /* image fills container width */
-    height: auto;      /* maintain aspect ratio */
-    display: block;    /* remove inline gap */
-    border-radius: 12px; /* optional: round corners */
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2); /* optional subtle shadow */
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
-
-.homepage  .gym {
+/* Gym container */
+.homepage .gym {
     width: 150px;
     height: 200px;
     border: 2px solid black;
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
+.homepage .gym img {
+    max-width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
 
-
-.homepage  .enter-btn {
+/* Enter Gym button */
+.homepage .enter-btn {
     position: absolute;
     bottom: 10px;
     right: 30px;
@@ -138,10 +147,42 @@
     cursor: pointer;
 }
 
-.homepage  .footer {
-      grid-area: footer;
-      text-align: center;
-      padding: 10px;
-      background-color: #e6e6e6;
-      border-top: 1px solid #ccc;
-    }
+/* Footer */
+.homepage .footer {
+    grid-area: footer;
+    text-align: center;
+    padding: 10px;
+    background-color: #e6e6e6;
+    border-top: 1px solid #ccc;
+}
+
+
+.homepage .arena {
+    border: 2px solid black;
+    width: 500px;
+    height: 300px;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 20px;
+
+    background-image: url('/static/gym_image.jpg');
+    background-size: cover;       /* Fill container, may crop */
+    background-repeat: no-repeat;
+    background-position: center;
+
+    /* Optional overlay for better contrast */
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+}
+
+.homepage .user {
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.6);
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    display: inline-block;
+}
+
