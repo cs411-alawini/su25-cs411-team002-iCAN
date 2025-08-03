@@ -45,7 +45,7 @@ def load_teams():
     The user has clicked the Teams button from the homepage
     """
 
-    return render_template('user-poke-team-members.html')
+    return render_template('all_teams.html')
 
 # Create the endpoint at url_prefix='/battle'
 @bp.route('/battle', methods=['POST','GET'])
