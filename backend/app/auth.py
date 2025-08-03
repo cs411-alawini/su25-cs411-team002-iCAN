@@ -54,6 +54,7 @@ def login():
                     session['username'] = username
                     user_id = existing_user[0]
                     session['user_id'] = user_id
+                    session['email'] = email
                     
                     print("Signup successful! Please log in.") 
                     return redirect(url_for('home.load_homepage'))
@@ -66,6 +67,7 @@ def login():
                     sql_cursor.execute(check_user_query, (f"%{username}%", password))
                     existing_user = sql_cursor.fetchone()
                     print(f"existing_user results = {existing_user}")
+                    print(f"User_id is {existing_user['user_id']}")
 
 
                     # Get user_id
@@ -75,7 +77,8 @@ def login():
 
                     if existing_user:
                         session['username'] = username
-                        session['user_id'] = user_id['user_id']
+                        session['user_id'] = existing_user['user_id']
+                        session['email'] = email
                         return redirect(url_for('home.load_homepage'))
                     else:
                         return "Incorrect username or password."
