@@ -1,5 +1,5 @@
 # From Pierre
-from flask import jsonify, render_template, Blueprint, request
+from flask import jsonify, render_template, Blueprint, request, session, redirect, url_for
 from app.db import getconn
 
 
@@ -85,7 +85,7 @@ def get_single_team(user_team_id):
         #return jsonify(results)
 
         # Rendering results in viewer
-        return render_template('user-teams.html', user_team=result)
+        return render_template('teams.html', user_team=result)
 
     except Exception as e:
         print(f"There was an error fetching data: {e}")
@@ -136,7 +136,7 @@ def create_team():
         conn.commit()
 
         cursor.close()
-        return redirect(url_for('user_teams.get_all_user_teams'))
+        return redirect(url_for('get_all_teams'))
 
     except Exception as e:
         print(f"There was an error creating the team: {e}")
