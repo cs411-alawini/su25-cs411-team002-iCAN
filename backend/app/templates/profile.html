@@ -1,47 +1,50 @@
 {% extends "base.html" %}
 
-<!-- Tab title -->
 {% block title %}Profile{% endblock %}
 
-<!-- For login HTML body -->    
 {% block content %}
-<div class="profile_container">
-    <!-- Left hand side -->
-    <div class="left_summary">
-        <div id="user_image">
-            <img id="user_image" src="{{ url_for('static', filename='user_img.webp') }}" alt="User image">
-        </div>
-        <div id="username_display">{{ user }}</div>
-        <div id="badge_status">Badge Level: {{ badge_level }}</div>
-    </div>
-
-    <!-- Navbar top -->
+    <!-- Back to Homepage button at the top -->
     <div class="top_navbar">
-        <button type="button" onclick="location.href='/home'">Back to Homepage</button>
-    </div>
-    <!-- To the right of left_summary-->
-    <!-- Top area -->
-    <div class="top_user_info">
-        <dl>
-            <dt>Username: {{ user }}</dt>
-            <dt>Email: </dt>
-        </dl>
+        <button type="button" onclick="location.href='/home'">← Back to Homepage</button>
     </div>
 
-    <!-- Bottom area -->
-    <div class="game_stats">
-        <dl>
-            <dt>Win/Loss Rate: </dt>
-            <dt>Average Battle Time: </dt>
-            <dt>Badges Earned: </dt>
-        </dl>
-    </div>
-        
-    <div class="delete_account">
-        <button>Delete Account</button>
-    </div>
+    <div class="profile_container">
+        <!-- Left hand side -->
+        <div class="left_summary">
+            <div class="user_image_container">
+                <img class="user_image" src="{{ url_for('static', filename='user_img.webp') }}" alt="User image">
+            </div>
+            <div class="username_display">{{ user }}</div>
+            <div class="badge_status">Badge Level: {{ badge_level }}</div>
+        </div>
 
+        <!-- Right side info -->
+        <div class="right_info">
+            <!-- Top area -->
+            <div class="top_user_info">
+                <dl>
+                    <dt>Username:</dt>
+                    <dd>{{ user }}</dd>
+                    <dt>Email:</dt>
+                    <dd>{{ email or "Not provided" }}</dd>
+                </dl>
+            </div>
 
-    
+            <!-- Bottom area -->
+            <div class="game_stats">
+                <dl>
+                    <dt>Win/Loss Rate:</dt>
+                    <dd>{{ win_loss_rate or "N/A" }}</dd>
+                    <dt>Average Battle Time:</dt>
+                    <dd>{{ avg_battle_time or "N/A" }}</dd>
+                    <dt>Badges Earned:</dt>
+                    <dd>{{ badges_earned or "0" }}</dd>
+                </dl>
+            </div>
+
+            <div class="delete_account">
+                <button class="delete_button">Delete Account</button>
+            </div>
+        </div>
+    </div>
 {% endblock %}
-

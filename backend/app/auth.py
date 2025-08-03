@@ -52,6 +52,8 @@ def login():
                     db_conn.commit()
 
                     session['username'] = username
+                    user_id = existing_user[0]
+                    session['user_id'] = user_id
                     
                     print("Signup successful! Please log in.") 
                     return redirect(url_for('home.load_homepage'))
@@ -63,10 +65,17 @@ def login():
                     check_user_query = "SELECT * FROM users WHERE user_name LIKE %s AND pwd = %s"
                     sql_cursor.execute(check_user_query, (f"%{username}%", password))
                     existing_user = sql_cursor.fetchone()
-                    print(existing_user)
+                    print(f"existing_user results = {existing_user}")
+
+
+                    # Get user_id
+                    get_user_id = "SELECT user_id FROM users WHERE user_name LIKE %s AND pwd = %s"
+                    sql_cursor.execute(get_user_id, (f"%{username}%", password))
+                    user_id = sql_cursor.fetchone()
 
                     if existing_user:
                         session['username'] = username
+                        session['user_id'] = user_id['user_id']
                         return redirect(url_for('home.load_homepage'))
                     else:
                         return "Incorrect username or password."
