@@ -21,6 +21,8 @@ def login():
         username = request.form.get('user_id')
         password = request.form.get('pwd')
         email = request.form.get('email')
+
+        print(form_type, username, password, email)
     
         # Setup to connect to GCP
         db_conn = getconn()
@@ -48,6 +50,9 @@ def login():
                     new_user_query = "INSERT INTO users (user_name, pwd, email, is_active) VALUES (%s, %s, %s, %s)"
                     sql_cursor.execute(new_user_query, (username, password, email, 1))
                     db_conn.commit()
+
+                    session['username'] = username
+                    
                     print("Signup successful! Please log in.") 
                     return redirect(url_for('home.load_homepage'))
 
@@ -55,9 +60,10 @@ def login():
                 # User initiated LOGIN
                 elif form_type == 'login':
                     # Check if username already exists
-                    check_user_query = "SELECT * FROM users WHERE user_name = %s AND pwd = %s"
-                    sql_cursor.execute(check_user_query, (username, password))
+                    check_user_query = "SELECT * FROM users WHERE user_name LIKE %s AND pwd = %s"
+                    sql_cursor.execute(check_user_query, (f"%{username}%", password))
                     existing_user = sql_cursor.fetchone()
+                    print(existing_user)
 
                     if existing_user:
                         session['username'] = username

@@ -1,4 +1,4 @@
-.teams_body {
+.create_teams_body {
     margin: 0;
     font-family: Arial, sans-serif;
     height: calc(100vh - 70px); 
@@ -10,13 +10,13 @@
     box-sizing: border-box;
 }
 
-.teams_body .top_navbar {
+.create_teams_body .top_navbar {
     grid-row: 1;
     grid-column: 1 /span 2;
 
 }
 
-.teams_header  {
+.create_teams_body .teams_header  {
     width: 100%;
     background-color: #e9e8e9;
     color: #a078d3;
@@ -32,7 +32,7 @@
 }
 
 
-.teams_body .pick_team_name {
+.create_teams_body .pick_team_name {
     grid-area: main;
     background-color: #ffffff;
     padding: 30px;
@@ -41,7 +41,7 @@
     box-sizing: border-box;
 }
 
-.teams_body .pick_pokemon {
+.create_teams_body .pick_pokemon {
     grid-area: sidebar;
     background-color: #fff6ff;
     border: 3px solid #d48af7;
@@ -54,11 +54,11 @@
     grid-column: 1;
 }
 
-.teams_body .pick_pokemon h3 {
+.create_teams_body .pick_pokemon h3 {
     text-align: center;
 }
 
-.teams_body .display_pokemon {
+.create_teams_body .display_pokemon {
     border: solid black;
     grid-row: 3 / span 4;
     grid-column: 2;

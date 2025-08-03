@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+<!-- Tab title -->
+{% block title %}Teams{% endblock %}
+
+<!-- For login HTML body -->    
+{% block content %}
+<div class="teams_body">
+    <!-- Navbar top -->
+    <div class="top_navbar">
+        <button type="button" onclick="location.href='/home'">Back to Homepage</button>
+    </div>
+
+    <div id="team_header">
+        <h1>Your Teams</h1>
+    </div>
+
+    <div id="teams_search">
+        <input type="text" id="team_searchbar" placeholder="Search teams..." />
+    </div>
+
+    <div id="teams_display">
+        {% for team in teams %}
+        <div class="team_line">
+
+            <div class="team_name">
+                {{ team.team_name }}
+            </div>
+
+            <div class="team_preview">
+                {% for pokemon in team.pokemons %}
+                        <span>{{ pokemon }}</span>{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="team_buttons">
+                <button>Edit</button>
+                <button>Delete</button>
+            </div>
+
+        </div>
+        {% endfor %}
+        <button type='button' onclick="location.href='/teams/create'">Create Team</button>
+    </div>
+</div>
+{% endblock %}

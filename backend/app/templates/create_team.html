@@ -1,100 +1,51 @@
-<!-- From Pierre -->
+<!-- From Mengmeng -->
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>User Teams</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-        }
-        table {
-            border-collapse: collapse;
-            width: 80%;
-            margin-bottom: 40px;
-        }
-        th, td {
-            border: 1px solid #aaa;
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #eee;
-        }
-        h1, h2 {
-            margin-bottom: 20px;
-        }
-        form {
-            margin-bottom: 40px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-        }
-        input[type="text"] {
-            width: 300px;
-            padding: 8px;
-            margin-bottom: 12px;
-        }
-        input[type="submit"] {
-            padding: 8px 16px;
-        }
-        .back-link {
-            margin-top: 20px;
-            display: inline-block;
-        }
-    </style>
-</head>
-<body>
+<!-- Tab title -->
+{% block title %}Teams{% endblock %}
 
-    <h1>User Teams</h1>
+<!-- For login HTML body -->    
+{% block content %}
 
-    <!-- Create New Team Form -->
-    <h2>Create a New Team</h2>
-    <form action="/user-teams/create" method="post">
-        <label for="team_name">Team Name:</label>
-        <input type="text" id="team_name" name="team_name" required>
-        <input type="submit" value="Create Team">
+<div class="create_teams_body">
+
+  <div class="top_navbar">
+        <button type="button" onclick="location.href='/home'">Back to Homepage</button>
+  </div>
+  
+  <div class="teams_header">
+    <header>Build Your First Pokémon Team!</header>
+  </div>
+  
+  <div class="pick_team_name">
+    <form id="set_team_name">
+      <label for="team_name">🎮 Team Name:</label>
+      <input type="text" id="team_name" placeholder="Enter team name" />
+      <button id="submit_team">💾 Save Team</button>
+      <br>
+      <label for="team_status">🔥 Set Team Status:</label>
+      <input type="checkbox" id="team_status" name="is_active" value="1" />
+      <span class="checkbox-label">Is Active</span>
     </form>
+  </div>
+  
+  <div class="pick_pokemon">
+    <h3>Pick Six Pokémon</h3>
+    {% for i in range(1, 7) %}
+    <form class="search_team_pokemon" method="POST">
+      <label for="pokemon{{ i }}">Pokémon {{ i }}</label>
+      <input type="text" name="pokemon_name" id="pokemon{{ i }}" placeholder="Search..." />
+      <button type="submit" id="search_poke{{ i }}">Search</button>
+      <br><br>
+    </form>
+  {% endfor %}
+  </div>
 
-    {% if entries %}
-        <h2>All Teams</h2>
-        <table>
-            <thead>
-                <tr>
-                    {% for column in entries[0].keys() %}
-                        <th>{{ column }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for team in entries %}
-                    <tr>
-                        {% for value in team.values() %}
-                            <td>{{ value }}</td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% elif user_team %}
-        <h2>Team Details</h2>
-        <table>
-            <tbody>
-                {% for key, value in user_team.items() %}
-                    <tr>
-                        <th>{{ key }}</th>
-                        <td>{{ value }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <a href="/user-teams" class="back-link">← Back to All Teams</a>
-    {% else %}
-        <p>No team data available.</p>
-    {% endif %}
+  
+  <div class="display_pokemon">
 
-</body>
-</html>
+  </div>
+
+</div>
+  
+{% endblock %}
