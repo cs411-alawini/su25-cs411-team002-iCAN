@@ -4,8 +4,6 @@
 
 {% block content %}
   <div class="pokedex_body">
-
-     <!-- Navbar top with back button -->
     <div class="top_navbar">
         <button type="button" onclick="location.href='/home'">Back to Home</button>
     </div>
@@ -13,7 +11,7 @@
     <h1>Search Pokedex</h1>
 
     <form id="search-form">
-      <input type="number" id="pokedex-id-input" placeholder="Enter Pokedex ID" required>
+      <input type="text" id="pokemon-name-input" placeholder="Enter Pokémon Name" required>
       <button type="submit">Find Pokémon</button>
       <a href="/pokedex"><button type="button">Show All</button></a>
     </form>
@@ -64,9 +62,9 @@
     <script>
       document.getElementById('search-form').addEventListener('submit', function(event) {
         event.preventDefault();
-        const pokedexId = document.getElementById('pokedex-id-input').value;
-        if (pokedexId) {
-          window.location.href = '/pokedex/' + pokedexId;
+        const pokemonName = document.getElementById('pokemon-name-input').value.trim();
+        if (pokemonName) {
+          window.location.href = '/pokedex/search/' + encodeURIComponent(pokemonName);
         }
       });
     </script>
