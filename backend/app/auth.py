@@ -21,6 +21,8 @@ def login():
         username = request.form.get('user_id')
         password = request.form.get('pwd')
         email = request.form.get('email')
+
+        print(form_type, username, password, email)
     
         # Setup to connect to GCP
         db_conn = getconn()
@@ -48,6 +50,12 @@ def login():
                     new_user_query = "INSERT INTO users (user_name, pwd, email, is_active) VALUES (%s, %s, %s, %s)"
                     sql_cursor.execute(new_user_query, (username, password, email, 1))
                     db_conn.commit()
+
+                    session['username'] = username
+                    user_id = existing_user[0]
+                    session['user_id'] = user_id
+                    session['email'] = email
+                    
                     print("Signup successful! Please log in.") 
                     return redirect(url_for('home.load_homepage'))
 
@@ -55,12 +63,22 @@ def login():
                 # User initiated LOGIN
                 elif form_type == 'login':
                     # Check if username already exists
-                    check_user_query = "SELECT * FROM users WHERE user_name = %s AND pwd = %s"
-                    sql_cursor.execute(check_user_query, (username, password))
+                    check_user_query = "SELECT * FROM users WHERE user_name LIKE %s AND pwd = %s"
+                    sql_cursor.execute(check_user_query, (f"%{username}%", password))
                     existing_user = sql_cursor.fetchone()
+                    print(f"existing_user results = {existing_user}")
+                    print(f"User_id is {existing_user['user_id']}")
+
+
+                    # Get user_id
+                    get_user_id = "SELECT user_id FROM users WHERE user_name LIKE %s AND pwd = %s"
+                    sql_cursor.execute(get_user_id, (f"%{username}%", password))
+                    user_id = sql_cursor.fetchone()
 
                     if existing_user:
                         session['username'] = username
+                        session['user_id'] = existing_user['user_id']
+                        session['email'] = email
                         return redirect(url_for('home.load_homepage'))
                     else:
                         return "Incorrect username or password."

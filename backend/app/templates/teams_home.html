@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+<!-- Tab title -->
+{% block title %}Teams{% endblock %}
+
+<!-- For login HTML body -->    
+{% block content %}
+<div class="teams_body">
+    <!-- Navbar top -->
+    <div class="top_navbar">
+        <button type="button" onclick="location.href='/home'">Back to Homepage</button>
+    </div>
+
+    <div id="team_header">
+        <h1>Your Teams</h1>
+    </div>
+
+    <div id="teams_search">
+        <input type="text" id="team_searchbar" placeholder="Search teams..." />
+    </div>
+
+    <div id="teams_display">
+        {% for team in teams %}
+        <div class="team_line">
+
+            <div class="team_name">
+                {{ team.team_name }}
+            </div>
+
+            <div class="team_preview">
+                {% for pokemon in team.pokemons %}
+                        <span>{{ pokemon }}</span>{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="team_buttons">
+            <form method="GET" action="{{ url_for('teams.edit_team', team_id=team.team_id) }}">
+                <button type="submit">Edit</button>
+            </form>
+                <form method="POST" action="{{ url_for('teams.delete_team', team_id=team.team_id) }}" onsubmit="return confirm('⚠️ Please confirm you\'d like to delete this team forever. This action cannot be undone.')">
+                    <button type="submit">Delete</button>
+                </form>
+            </div>
+
+        </div>
+        {% endfor %}
+        <button type='button' onclick="location.href='/teams/new'">Create Team</button>
+    </div>
+</div>
+
+<script>
+document.getElementById('team_searchbar').addEventListener('input', function () {
+    const query = this.value.toLowerCase();
+    const teamElements = document.querySelectorAll('.team_line');
+
+    teamElements.forEach(team => {
+        const nameEl = team.querySelector('.team_name');
+        const teamName = nameEl ? nameEl.innerText.toLowerCase() : '';
+
+        if (teamName.includes(query)) {
+            team.style.display = '';
+        } else {
+            team.style.display = 'none';
+        }
+    });
+});
+</script>
+{% endblock %}

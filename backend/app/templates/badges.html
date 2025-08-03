@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Badges{% endblock %}
+
+{% block content %}
+    <!-- Back to Homepage button at the top -->
+    <div class="badges_body">
+        <div class="top_navbar">
+            <button type="button" onclick="location.href='/home'">← Back to Homepage</button>
+        </div>
+
+        <h1>Your Badges</h1>
+
+        <div class="badge-container">
+            {% for badge in all_badges %}
+                {% set earned = badge.name in earned_badges %}
+                <div class="badge-card {% if not earned %}locked{% endif %}">
+                    <img src="{{ url_for('static', filename='badge.png') }}" alt="{{ badge.name }} badge" />
+                    <h3>{{ badge.name }}</h3>
+                    <p>{{ badge.description }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if earned_badges|length == 0 %}
+            <p style="text-align: center; margin-top: 20px;">
+                You haven't earned any badges yet. Keep going!
+            </p>
+        {% endif %}
+    </div>
+    
+{% endblock %}

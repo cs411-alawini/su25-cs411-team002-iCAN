@@ -11,10 +11,10 @@ def create_app():
     app.secret_key = 'pikapika'
 
     # Import and register the Pokedex blueprint
-    from . import pokedex, auth, main
+    from . import pokedex, auth, main, teams
     app.register_blueprint(pokedex.bp)
     app.register_blueprint(auth.bp)
     app.register_blueprint(main.bp)    
-    
-    
+    app.register_blueprint(teams.bp)
+
     return app
