@@ -1,88 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokedex</title>
-    <style>
-        body { font-family: sans-serif; background-color: #f4f4f9; margin: 2em; }
-        form { margin-bottom: 2em; }
-        input { padding: 10px; font-size: 16px; width: 200px; }
-        button { padding: 10px 15px; font-size: 16px; cursor: pointer; }
-        table { width: 100%; border-collapse: collapse; box-shadow: 0 2px 3px rgba(0,0,0,0.1); }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; }
-        thead th { background-color: #e74c3c; color: white; }
-        tbody tr:nth-of-type(even) { background-color: #f9f9f9; }
-        tbody tr:hover { background-color: #f1f1f1; }
-    </style>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Pokedex{% endblock %}
+
+{% block content %}
+  <div class="pokedex_body">
+
+    <!-- Back to Home button at top -->
+    <button id="back_home_button" onclick="location.href='/home'">Back to Home</button>
 
     <h1>Search Pokedex</h1>
 
     <form id="search-form">
-        <input type="number" id="pokedex-id-input" placeholder="Enter Pokedex ID" required>
-        <button type="submit">Find Pokémon</button>
-        <a href="/pokedex"><button type="button">Show All</button></a>
+      <input type="number" id="pokedex-id-input" placeholder="Enter Pokedex ID" required>
+      <button type="submit">Find Pokémon</button>
+      <a href="/pokedex"><button type="button">Show All</button></a>
     </form>
 
     <table>
-        <thead>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Type 1</th>
+          <th>Type 2</th>
+          <th>HP</th>
+          <th>Attack</th>
+          <th>Defense</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if entries %}
+          {% for pokemon in entries %}
             <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Type 1</th>
-                <th>Type 2</th>
-                <th>HP</th>
-                <th>Attack</th>
-                <th>Defense</th>
+              <td>{{ pokemon.pokedex_id }}</td>
+              <td>{{ pokemon.name }}</td>
+              <td>{{ pokemon.pType_1 }}</td>
+              <td>{{ pokemon.pType_2 or 'N/A' }}</td>
+              <td>{{ pokemon.hp }}</td>
+              <td>{{ pokemon.attack }}</td>
+              <td>{{ pokemon.defense }}</td>
             </tr>
-        </thead>
-        <tbody>
-            {% if entries %}
-                {% for pokemon in entries %}
-                    <tr>
-                        <td>{{ pokemon.pokedex_id }}</td>
-                        <td>{{ pokemon.name }}</td>
-                        <td>{{ pokemon.pType_1 }}</td>
-                        <td>{{ pokemon.pType_2 or 'N/A' }}</td>
-                        <td>{{ pokemon.hp }}</td>
-                        <td>{{ pokemon.attack }}</td>
-                        <td>{{ pokemon.defense }}</td>
-                    </tr>
-                {% endfor %}
-            {% elif pokemon %}
-                <tr>
-                    <td>{{ pokemon.pokedex_id }}</td>
-                    <td>{{ pokemon.name }}</td>
-                    <td>{{ pokemon.pType_1 }}</td>
-                    <td>{{ pokemon.pType_2 or 'N/A' }}</td>
-                    <td>{{ pokemon.hp }}</td>
-                    <td>{{ pokemon.attack }}</td>
-                    <td>{{ pokemon.defense }}</td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="7">No Pokedex entry found.</td>
-                </tr>
-            {% endif %}
-        </tbody>
+          {% endfor %}
+        {% elif pokemon %}
+          <tr>
+            <td>{{ pokemon.pokedex_id }}</td>
+            <td>{{ pokemon.name }}</td>
+            <td>{{ pokemon.pType_1 }}</td>
+            <td>{{ pokemon.pType_2 or 'N/A' }}</td>
+            <td>{{ pokemon.hp }}</td>
+            <td>{{ pokemon.attack }}</td>
+            <td>{{ pokemon.defense }}</td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="7">No Pokedex entry found.</td>
+          </tr>
+        {% endif %}
+      </tbody>
     </table>
 
     <script>
-        document.getElementById('search-form').addEventListener('submit', function(event) {
-            // Stop the form from submitting the default way
-            event.preventDefault(); 
-            
-            // Get the ID from the input box
-            const pokedexId = document.getElementById('pokedex-id-input').value;
-            
-            // Redirect the browser to the correct URL
-            if (pokedexId) {
-                window.location.href = '/pokedex/' + pokedexId;
-            }
-        });
+      document.getElementById('search-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const pokedexId = document.getElementById('pokedex-id-input').value;
+        if (pokedexId) {
+          window.location.href = '/pokedex/' + pokedexId;
+        }
+      });
     </script>
-
-</body>
-</html>
+  </div>
+{% endblock %}

@@ -1,4 +1,10 @@
-/* Center the title */
+/* General styles */
+.battle_body {
+    font-family: 'Verdana', sans-serif;
+    padding: 20px;
+}
+
+/* Title */
 .battle_body h1 {
     text-align: center;
     color: #a078d3;
@@ -6,39 +12,43 @@
     font-size: 2.5rem;
 }
 
+/* Home button */
 .battle_body #home_button {
     float: right;
+    background-color: #f0e0ff;
+    border: 1px solid #d48af7;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
-/* Main form container box */
+/* Form container */
 .battle_body #form-container {
-    margin: 30px auto;
+    margin: 40px auto;
     max-width: 600px;
     background-color: #fff6ff;
     border: 3px solid #d48af7;
     padding: 30px;
     border-radius: 20px;
-    font-family: 'Verdana', sans-serif;
     box-shadow: 0 0 12px rgba(211, 143, 255, 0.3);
 }
 
-/* Center form content inside */
+/* Form structure */
 .battle_body form {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 20px;
 }
 
-/* Labels aligned with inputs */
-.battle_body #form-row {
+/* Form rows */
+.battle_body .form-row {
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
-    width: 100%;
     justify-content: space-between;
+    width: 100%;
 }
 
-.battle_body #form-row label {
+.battle_body .form-row label {
     font-weight: bold;
     color: #6b2fa1;
     font-size: 1.1rem;
@@ -47,25 +57,19 @@
     margin-right: 10px;
 }
 
-.battle_body .form-row input[type="text"],
-.form-row select {
+.battle_body .form-row select {
     flex: 1;
     padding: 10px;
     font-size: 1rem;
     border: 2px solid #c292f5;
     border-radius: 10px;
-    background-color: #fff;
-}
-
-.battle_body .form-row select {
     background-color: #a078d3;
     color: white;
-    border: none;
 }
 
-/* Start button style */
+/* Submit button */
 .battle_body input[type="submit"],
-.start-battle-btn {
+.battle_body .start-battle-btn {
     padding: 10px 20px;
     font-size: 1rem;
     background-color: #a078d3;
@@ -77,12 +81,39 @@
     transition: background-color 0.3s ease;
 }
 
-.battle_bodyinput[type="submit"]:hover,
-.start-battle-btn:hover {
+.battle_body input[type="submit"]:hover,
+.battle_body .start-battle-btn:hover {
     background-color: #9246dd;
 }
 
-/* Back link style */
+/* Tables (user and gym teams) */
+.table-wrapper {
+    overflow-x: auto;
+    margin: 30px auto;
+    max-width: 90%;
+}
+
+.battle_body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 40px;
+}
+
+.battle_body th, .battle_body td {
+    border: 3px solid #d48af7;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-family: 'Verdana', sans-serif;
+    background-color: #fff;
+}
+
+.battle_body th {
+    background-color: #eee;
+    color: #6b2fa1;
+    font-weight: bold;
+}
+
+/* Optional back link styling */
 .battle_body .back-link {
     display: inline-block;
     margin: 20px;
@@ -93,39 +124,4 @@
 
 .battle_body .back-link:hover {
     text-decoration: underline;
-}
-
-
-/* table stuff */
-.user_teams-table body {
-     font-family: Arial, sans-serif;
-     margin: 40px;
-}
-
-.user_teams-table h1, h2 {
-     margin-bottom: 20px;
-}
-
-.user_teams-table table {
-     border-collapse: collapse;
-     width: 90%;
-     margin-bottom: 40px;
-}
-
-.user_teams-table th, td {
-     border: 3px solid #d48af7;
-     border-radius: 20px;
-     padding: 20px;
-     border-radius: 20px;
-     font-family: 'Verdana', sans-serif;
-     box-shadow: 0 0 12px rgba(211, 143, 255, 0.3);
-}
-
-.user_teams-table th {
-     background-color: #eee;
-}
-
-.user_teams-table .back-link {
-     margin-top: 20px;
-     display: inline-block;
 }

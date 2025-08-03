@@ -182,14 +182,57 @@ def load_teams():
 
 
 # Create the endpoint at url_prefix='/battle'
-@bp.route('/battle', methods=['POST','GET'])
+@bp.route('/battle', methods=['GET', 'POST'])
 def load_battle():
     """
-    The user has clicked the Enter Gym button from the homepage
+    Renders a form to select a team and gym leader (no Pokémon data shown).
     """
+    username = session.get('username')
+    if not username:
+        return redirect(url_for('auth.login'))
 
-    return render_template('battle.html')
+    user_teams = []
+    gyms = []
+    selected_user_team_id = None
+    selected_gym_id = None
 
+    db_conn = getconn()
+    try:
+        with db_conn.cursor() as sql_cursor:
+            # Get user's teams
+            get_user_teams = """
+                SELECT UT.user_team_id, UT.team_name
+                FROM users U
+                NATURAL JOIN user_teams UT
+                WHERE U.user_name LIKE %s
+            """
+            sql_cursor.execute(get_user_teams, (f"%{username}%",))
+            user_teams = sql_cursor.fetchall()
+
+            # Get gym_leaders
+            get_gym_leaders = """
+                SELECT gym_id, gym_leader
+                FROM gym_leaders
+                ORDER BY gym_leader
+            """
+            sql_cursor.execute(get_gym_leaders)
+            gym_leaders = sql_cursor.fetchall()
+
+            # If the user submitted the form, store their selections (optional)
+            if request.method == 'POST':
+                selected_user_team_id = request.form.get('user_team_id')
+                selected_gym_id = request.form.get('gym_id')
+
+    finally:
+        db_conn.close()
+
+    return render_template(
+        'battle.html',
+        user_teams=user_teams,
+        gyms=gym_leaders,
+        selected_user_team_id=selected_user_team_id,
+        selected_gym_id=selected_gym_id
+    )
 
 
 # Create the endpoint at url_prefix='/badges'

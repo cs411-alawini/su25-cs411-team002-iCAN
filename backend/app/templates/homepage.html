@@ -25,11 +25,14 @@
   <div class="main">
     <div class="arena">
       <div class="user">
-        <div class="user-shape"></div>
+        <div class="user-image">
+          <img src="{{ url_for('static', filename='user.webp') }}" alt="User Image">
+        </div>
         <div>{{ user }}</div>
       </div>
-      <div class="gym"></div>
-      <!--button class="enter-btn" onclick="alert('Entering Gym...')">Enter Gym</button-->
+      <div class="gym">
+        <img src="{{ url_for('static', filename='gym_image.jpg') }}" alt="Gym Image">
+      </div>
       <button class="enter-btn" onclick="location.href='/battle'">Enter Gym</button>
     </div>
   </div>

@@ -1,0 +1,192 @@
+/* Back to Home button fixed at top */
+#back_home_button {
+  position: fixed;      /* fixed at top of viewport */
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 12px 0;
+  background-color: #3498db;  /* bright blue */
+  color: white;
+  border: none;
+  font-size: 1.25rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 1000;        /* above everything else */
+  transition: background-color 0.3s ease;
+}
+
+#back_home_button:hover {
+  background-color: #217dbb;  /* darker blue on hover */
+}
+
+/* Main container */
+.pokedex_body {
+  font-family: sans-serif;
+  background-color: #f4f4f9;
+  margin: 2em;
+  padding-top: 60px;   /* add space so content isn't hidden under fixed button */
+  position: relative;
+  z-index: 10;
+}
+
+/* Form styling */
+.pokedex_body form {
+  margin-bottom: 2em;
+}
+
+/* Inputs */
+.pokedex_body input {
+  padding: 10px;
+  font-size: 16px;
+  width: 200px;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  transition: border-color 0.3s ease;
+}
+
+.pokedex_body input:focus {
+  outline: none;
+  border-color: #e74c3c;
+}
+
+/* Buttons inside pokedex_body (Find Pokémon, Show All) */
+.pokedex_body button {
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #e74c3c;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+  margin-left: 10px;
+}
+
+.pokedex_body button:hover {
+  background-color: #c0392b;
+}
+
+/* Table styling */
+.pokedex_body table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Table headers and cells */
+.pokedex_body th,
+.pokedex_body td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Table header background */
+.pokedex_body thead th {
+  background-color: #e74c3c;
+  color: white;
+}
+
+/* Even rows */
+.pokedex_body tbody tr:nth-of-type(even) {
+  background-color: #f9f9f9;
+}
+
+/* Hover on rows */
+.pokedex_body tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.pokedex_body {
+  font-family: sans-serif;
+  background-color: #f4f4f9;
+  margin: 2em;
+  position: relative;
+  z-index: 10;
+}
+
+/* Back to Home button styling (normal flow, top of content) */
+.pokedex_body #back_home_button {
+  background-color: #2c3e50;   /* dark slate blue */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 1.5em;       /* spacing below the button */
+  transition: background-color 0.3s ease;
+}
+
+.pokedex_body #back_home_button:hover {
+  background-color: #1a252f;  /* darker on hover */
+}
+
+/* Form styling */
+.pokedex_body form {
+  margin-bottom: 2em;
+}
+
+/* Inputs */
+.pokedex_body input {
+  padding: 10px;
+  font-size: 16px;
+  width: 200px;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  transition: border-color 0.3s ease;
+}
+
+.pokedex_body input:focus {
+  outline: none;
+  border-color: #e74c3c;
+}
+
+/* Buttons inside form (Find Pokémon, Show All) */
+.pokedex_body button:not(#back_home_button) {
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #e74c3c;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+  margin-left: 10px;
+}
+
+.pokedex_body button:not(#back_home_button):hover {
+  background-color: #c0392b;
+}
+
+/* Table styling */
+.pokedex_body table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Table headers and cells */
+.pokedex_body th,
+.pokedex_body td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Table header background */
+.pokedex_body thead th {
+  background-color: #e74c3c;
+  color: white;
+}
+
+/* Even rows */
+.pokedex_body tbody tr:nth-of-type(even) {
+  background-color: #f9f9f9;
+}
+
+/* Hover on rows */
+.pokedex_body tbody tr:hover {
+  background-color: #f1f1f1;
+}

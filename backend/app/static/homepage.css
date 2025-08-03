@@ -99,48 +99,32 @@
 
 .homepage  .user {
     text-align: center;
-    color: darkgreen;
 }
 
-.homepage  .user-shape {
-    width: 0;
-    height: 0;
-    border-left: 40px solid transparent;
-    border-right: 40px solid transparent;
-    border-bottom: 70px solid darkgreen;
-    margin: auto;
-    position: relative;
+.homepage .user-image {
+    /* Optional container styles */
+    width: 120px;        /* fixed container width */
+    height: auto;        /* let height auto adjust */
+    margin: 0 auto 10px; /* center horizontally and space below */
 }
 
-.homepage  .user-shape::before {
-    content: '';
-    position: absolute;
-    top: -30px;
-    left: -20px;
-    width: 40px;
-    height: 40px;
-    background-color: darkgreen;
-    border-radius: 50%;
+.homepage .user-image img {
+    width: 100%;       /* image fills container width */
+    height: auto;      /* maintain aspect ratio */
+    display: block;    /* remove inline gap */
+    border-radius: 12px; /* optional: round corners */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2); /* optional subtle shadow */
 }
+
 
 .homepage  .gym {
     width: 150px;
-    height: 100px;
+    height: 200px;
     border: 2px solid black;
     position: relative;
 }
 
-.homepage  .gym::before {
-    content: '';
-    position: absolute;
-    top: -50px;
-    left: 0;
-    width: 0;
-    height: 0;
-    border-left: 75px solid transparent;
-    border-right: 75px solid transparent;
-    border-bottom: 50px solid black;
-}
+
 
 .homepage  .enter-btn {
     position: absolute;
