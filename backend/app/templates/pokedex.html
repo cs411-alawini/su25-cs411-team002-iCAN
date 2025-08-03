@@ -6,6 +6,9 @@
     <title>Pokedex</title>
     <style>
         body { font-family: sans-serif; background-color: #f4f4f9; margin: 2em; }
+        form { margin-bottom: 2em; }
+        input { padding: 10px; font-size: 16px; width: 200px; }
+        button { padding: 10px 15px; font-size: 16px; cursor: pointer; }
         table { width: 100%; border-collapse: collapse; box-shadow: 0 2px 3px rgba(0,0,0,0.1); }
         th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; }
         thead th { background-color: #e74c3c; color: white; }
@@ -15,7 +18,13 @@
 </head>
 <body>
 
-    <h1>Pokedex Entries</h1>
+    <h1>Search Pokedex</h1>
+
+    <form id="search-form">
+        <input type="number" id="pokedex-id-input" placeholder="Enter Pokedex ID" required>
+        <button type="submit">Find Pokémon</button>
+        <a href="/pokedex"><button type="button">Show All</button></a>
+    </form>
 
     <table>
         <thead>
@@ -30,10 +39,20 @@
             </tr>
         </thead>
         <tbody>
-            {# This is a Jinja2 loop that iterates through the data from your Python code #}
-            {% for pokemon in entries %}
+            {% if entries %}
+                {% for pokemon in entries %}
+                    <tr>
+                        <td>{{ pokemon.pokedex_id }}</td>
+                        <td>{{ pokemon.name }}</td>
+                        <td>{{ pokemon.pType_1 }}</td>
+                        <td>{{ pokemon.pType_2 or 'N/A' }}</td>
+                        <td>{{ pokemon.hp }}</td>
+                        <td>{{ pokemon.attack }}</td>
+                        <td>{{ pokemon.defense }}</td>
+                    </tr>
+                {% endfor %}
+            {% elif pokemon %}
                 <tr>
-                    {# The {{ ... }} syntax inserts the data into the HTML #}
                     <td>{{ pokemon.pokedex_id }}</td>
                     <td>{{ pokemon.name }}</td>
                     <td>{{ pokemon.pType_1 }}</td>
@@ -44,11 +63,26 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="7">No Pokedex entries found.</td>
+                    <td colspan="7">No Pokedex entry found.</td>
                 </tr>
-            {% endfor %}
+            {% endif %}
         </tbody>
     </table>
+
+    <script>
+        document.getElementById('search-form').addEventListener('submit', function(event) {
+            // Stop the form from submitting the default way
+            event.preventDefault(); 
+            
+            // Get the ID from the input box
+            const pokedexId = document.getElementById('pokedex-id-input').value;
+            
+            // Redirect the browser to the correct URL
+            if (pokedexId) {
+                window.location.href = '/pokedex/' + pokedexId;
+            }
+        });
+    </script>
 
 </body>
 </html>

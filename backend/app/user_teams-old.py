@@ -3,12 +3,12 @@ from app.db import getconn
 
 
 # Routes will go here e.g. @bp.route('/pokedex')
-bp = Blueprint('pokedex', __name__, url_prefix='/pokedex', template_folder='templates')
+bp = Blueprint('user_teams', __name__, url_prefix='/user-teams', template_folder='templates')
 
-# Route for displaying ALL Pokemon
-# Create the endpoint at url_prefix='/pokedex'
+# Route for displaying ALL user teams
+# Create the endpoint at url_prefix='/user-teams'
 @bp.route('/', methods=['GET'])
-def get_all_pokemon():
+def get_all_user_teams():
     conn = None
     try:  
         # Get the database connection
@@ -18,7 +18,7 @@ def get_all_pokemon():
         # Create a cursor to execute queries and return in a dict format
         cursor = conn.cursor()
     
-        query = "SELECT * FROM pokedex_entries ORDER BY pokedex_id;"
+        query = "SELECT * FROM user_teams ORDER BY user_team_id;"
         # Select query
         print('Fetching data...')
         cursor.execute(query)
@@ -36,7 +36,7 @@ def get_all_pokemon():
         #return jsonify(results)
 
         # Rendering results in viewer
-        return render_template('pokedex.html', entries=results)
+        return render_template('user-teams.html', entries=results)
 
     except Exception as e:
         print(f"There was an error fetching data: {e}")
@@ -48,10 +48,10 @@ def get_all_pokemon():
             conn.close()
             print('Connection closed.')
 
-# Route for displaying ONE Pokemon by its ID
-# Create the endpoint at url_prefix='/pokedex/1' t
-@bp.route('/<int:pokedex_id>', methods=['GET'])
-def get_one_pokemon(pokedex_id):
+# Route for displaying ONE user team by its ID
+# Create the endpoint at url_prefix='/user-teams/1' t
+@bp.route('/<int:user_team_id>', methods=['GET'])
+def get_one_user_team(user_team_id):
     conn = None
     try:  
         # Get the database connection
@@ -61,10 +61,10 @@ def get_one_pokemon(pokedex_id):
         # Create a cursor to execute queries and return in a dict format
         cursor = conn.cursor()
     
-        query = "SELECT * FROM pokedex_entries WHERE pokedex_id= %s;"
+        query = "SELECT * FROM user_teams WHERE user_team_id= %s;"
         # Select query
         print('Fetching data...')
-        cursor.execute(query, (pokedex_id))
+        cursor.execute(query, (user_team_id))
         print('Data successfully fetched.')
     
         # Fetch the results
@@ -78,7 +78,7 @@ def get_one_pokemon(pokedex_id):
         #return jsonify(results)
 
         # Rendering results in viewer
-        return render_template('pokedex.html', pokemon=result)
+        return render_template('user-teams.html', user_team=result)
 
     except Exception as e:
         print(f"There was an error fetching data: {e}")
