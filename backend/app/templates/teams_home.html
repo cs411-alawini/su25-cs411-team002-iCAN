@@ -43,4 +43,22 @@
         <button type='button' onclick="location.href='/teams/create'">Create Team</button>
     </div>
 </div>
+
+<script>
+document.getElementById('team_searchbar').addEventListener('input', function () {
+    const query = this.value.toLowerCase();
+    const teamElements = document.querySelectorAll('.team_line');
+
+    teamElements.forEach(team => {
+        const nameEl = team.querySelector('.team_name');
+        const teamName = nameEl ? nameEl.innerText.toLowerCase() : '';
+
+        if (teamName.includes(query)) {
+            team.style.display = '';
+        } else {
+            team.style.display = 'none';
+        }
+    });
+});
+</script>
 {% endblock %}
