@@ -241,17 +241,52 @@ def load_badges():
     """
     The user has clicked the Badges button from homepage
     """
-    # Possible gym badges
-    gym_badges = [
-        {"name": "Explorer", "description": "Explore new places", "image_filename": "badge.png"},
-        {"name": "Achiever", "description": "Complete difficult challenges", "image_filename": "badge.png"},
-        {"name": "Helper", "description": "Help other users", "image_filename": "badge.png"},
-        {"name": "Veteran", "description": "Use the app for 1 year", "image_filename": "badge.png"},
-    ]
+    username = session.get('username')
+    user_id = session.get('user_id')
 
-    # Example: badges this user has earned (you could get from DB)
-    earned_badges = {"Explorer", "Helper"}  # Set for faster 'in' lookup
+    if not username:
+        return redirect(url_for('auth.login'))
 
-    return render_template('badges.html', all_badges=gym_badges, earned_badges=earned_badges)
+    db_conn = getconn()
 
+    all_gym_badges = []
+    earned_badges = []
 
+    try:
+        with db_conn.cursor() as sql_cursor:
+
+            # Get all badges for gyms
+            get_badge_name = """
+                SELECT badge_title
+                FROM gym_leaders
+            """
+            sql_cursor.execute(get_badge_name)
+            gym_badges_dict = sql_cursor.fetchall()
+            for pair in gym_badges_dict:
+                badge_title = pair['badge_title']
+                all_gym_badges.append({
+                    "name": badge_title,
+                    "description": "",  
+                    "image_filename": "badge.png"  
+                })
+
+            # Get a user's earned badges
+            get_earned_badges = """
+                SELECT DISTINCT GL.badge_title
+                FROM (
+                    SELECT gym_id, B.win_loss_outcome
+                    FROM user_teams UT NATURAL JOIN battles B
+                    WHERE B.win_loss_outcome = 1 AND UT.user_id = %s
+                    GROUP BY gym_id
+                ) AS gyms_won JOIN gym_leaders GL 
+                ON gyms_won.gym_id = GL.gym_id
+            """
+            sql_cursor.execute(get_earned_badges, (user_id,))
+            earned_badges_dict = sql_cursor.fetchall()
+            for pair in earned_badges_dict:
+                earned_badges.append(pair['badge_title']) 
+
+    finally:
+        db_conn.close()
+
+    return render_template('badges.html', all_badges=all_gym_badges, earned_badges=earned_badges)
