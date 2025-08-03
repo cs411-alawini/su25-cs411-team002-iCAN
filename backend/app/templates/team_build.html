@@ -1,199 +1,49 @@
-Hannah
-hannah_62537
-Online
+<!-- From Mengmeng -->
+{% extends "base.html" %}
 
-Hannah — Yesterday at 9:14 PM
-Okay sounds good!
-Mengmeng — Yesterday at 9:14 PM
-I will follow your design on Powerpoints
-Hannah — Yesterday at 9:34 PM
-Feel free to also make your own design!
-I may sleep early today so I don't think I'll get much done
-Pierre Font — Yesterday at 9:47 PM
-@Mengmeng for the team construction part, a user needs to give their team a name (the user doesn't pick the user_team_id because that is just incrementing one number from the user_team_id from the last team that anyone created). The user_id, user_team_id, and team_name all go into the user_teams table. A user can change the team_name after making it if they wish. A user can also deactivate a team if they wish, which affects the is_active column on the user_teams table. Once a user has created a team, then they can add six Pokemon from the Pokedex to the team, and for each Pokemon they can choose four moves (from the pokemon_moves table, not the moves table). After putting the Pokemon and moves on their team, they should be able to see a list of the Pokemon on their team (and maybe a picture of each Pokemon? and its current hp, along with the four moves they chose for each Pokemon and the current pp for each move. They also will have the option to change the Pokemon or the moves on their team at any time (but not during a battle). I don't know if any of that is helpful for the front end. And if you or anyone else think any of that isn't how it should be done, please say so!
-Mengmeng — 8:05 AM
-I am not very creative🥹 😵‍💫
-Image
-Image
-Pierre Font — 8:07 AM
-😂
-The Pokémon team building page looks like a good start. They are both better than anything I could do.
-Mengmeng — 8:11 AM
-We really have very limited time😔
-Pierre Font — 8:11 AM
-I think if we focus on what the Stage 4 rubric calls for we will be fine
-Mengmeng — 8:11 AM
-Lux hasn't responded my email, I worry about i have no place to live when i arrive at Urbana
-Mengmeng — 8:12 AM
-Yes, Tian says just check those criteria
-I probably cannot stay too late. But I can get up early. I want to stay a healthy route so that my body can get rid of inflammation. My throat pain has't been released and I guess it might be a sore on my throat.
-Pierre Font — 8:18 AM
-If the throat pain doesn’t go away, you may need to see a doctor to make sure you don’t have strep throat. If you have strep throat, you probably need antibiotics.
-Mengmeng — 8:19 AM
-Right, my mom just asked me to see a doctor tomorrow. I guess i have to see one
-Pierre Font — 9:15 AM
-I may be a few minutes late to our meeting at 11. But please start without me! You can work on getting Mengmeng set up on Flask, on the front end, on SQL commands, or on whatever you prefer!
-Hannah — 9:50 AM
-Are we doing 11am CST today instead of 10?
-Hannah — 9:50 AM
-What do you need help with? Do you need help looking for apartments?
-Pierre Font — 9:51 AM
-No 10 is fine
-I’ll be there just a few minutes late
-Pierre Font — 10:09 AM
-I've joined the Zoom.
-I'm in the Zoom meeting. I've just stepped away to use the bathroom.
-I'm back.
-Hannah — 10:18 AM
-Sorry Pierre I just saw this
-Pierre Font — 10:19 AM
-@Mengmeng Hannah and I are in the Zoom if you are able to join
-Pierre Font — 10:42 AM
-@Mengmeng are you ok? Are you able to join the Zoom before you go to bed?
-Pierre Font — 10:50 AM
-@tanjie are you still able to join us at 11?
-Pierre Font — 11:14 AM
-I’m out of the shower and will be back on zoom in a few minutes
-tanjie — 11:20 AM
-hey I just got home from the gtm
-gym*
-Pierre Font — 11:20 AM
-Hi Tanjie! Hannah and I are on Zoom.
-Hannah has to go around 12. Are you able to join us before then @tanjie ?
-Pierre Font — 11:42 AM
-@Mengmeng  We signed up at a time to do our project Demo for 7 PM Central Wednesday, August 6. I think that is 8 am in China. Does that time work for you? I don't know if you need to work that week. There also was an 8:40 pm slot (9:40 am in China) but we didn't pick it because we thought you might be at work.
-Pierre Font — 4:38 PM
-Also @Mengmeng, whenever you wake up, I think @Hannah at some point tonight after 7 pm Central to go over getting you set up with Flask. Tanjie said you won't be able to work on the frontend without working with Flask on the backend because the Backend is what connects the frontend to the database. I can join the Zoom too. If there is time we can also try to get you to be able to put up a page for battles that is connected to the database. We want to have an ability to do keyword search on battles to find out battle outcome, badges won, etc (although this would involve a join with gym_leaders, where the badge information is).
-tanjie — 4:45 PM
-ahhh so my meeting with Dr. Gertner and Dr. Williams went super long and now I cant get ahold of Leticia
-ahhh
-i also havent eaten a real meal all day outside of cereal or showered
-Leticia might not get back to me so I might be freer in the evening later
-Pierre Font — 4:46 PM
-Sorry about that.
-I hope the meeting with the Professors wasn’t too stressful
-We’d love to have you join us tonight if you can!
-tanjie — 4:47 PM
-it was a little because dr williams can be so overbearing at times but its fine. its just i have another deliverable by wednesday at noon
-Pierre Font — 4:54 PM
-Ok. We need to try to get as much of the project done as early as possible. I hope I can finish working on user teams and the Pokédex asap so that I can help on other things.
-Pierre Font — 6:03 PM
-@Hannah are you still able to meet at 7 Central tonight?
-Hannah — 6:51 PM
-Yes! I just got home
-I'll join at 7
-I need to use the bathroom
-Pierre Font — 6:52 PM
-Let’s meet at 7:15. I am just finishing up dinner.
-I don’t know if Mengmeng is up yet.
-Hannah — 6:53 PM
-Okay sounds good
-Pierre Font — 7:14 PM
-It’ll be more like 7:20. I need to use the bathroom too now! Sorry.
-Mengmeng — 7:17 PM
-I am up
-Mengmeng — 7:19 PM
-I totally understand. I have experience it.
-Pierre Font — 7:21 PM
-I'm joining the zoom now
-Hannah — 7:22 PM
-i'm here too
-Pierre Font — 7:22 PM
-@Mengmeng are you able to join Zoom yet?
-Hannah — 7:22 PM
-Mengmeng, do you need help setting up Flask?
-Pierre Font — 7:30 PM
-@tanjie are you around at all this evening or did you wind up meeting with Leticia anyway?
-Mengmeng — 8:50 PM
-Here they are
-Image
-<!-- templates/build_team.html -->
-<!DOCTYPE html>
-<html lang="en">
+<!-- Tab title -->
+{% block title %}Teams{% endblock %}
 
-<head>
-    <meta charset="UTF-8" />
-Expand
-team_build.html
-2 KB
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Build Your PokÃ©mon Team</title>
-Expand
-homepage.html
-2 KB
- body {
-     margin: 0;
-     font-family: Arial, sans-serif;
-     height: 100vh;
- }
- .content-wrapper {
-Expand
-team.css
-4 KB
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    display: grid;
-    grid-template-columns: 200px 1fr 150px;
-    grid-template-rows: auto 1fr 50px;
-Expand
-homepage.css
-4 KB
-Hannah — 8:50 PM
-I will add these to my branch and push to main
-﻿
-<!-- templates/build_team.html -->
-<!DOCTYPE html>
-<html lang="en">
+<!-- For login HTML body -->    
+{% block content %}
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Build Your Pokémon Team</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style/team.css') }}">
-</head>
+<div class="teams_body">
 
-<body>
-  <header>Build Your First Pokémon Team!</header>
-
-  <div class="content-wrapper">
-    <div class="sidebar">
-      <h3>Pick Six Pokémon</h3>
-      {% for i in range(1, 7) %}
-      <label for="pokemon{{ i }}">Pokémon {{ i }}</label>
-      <input type="text" name="pokemon{{ i }}" id="pokemon{{ i }}" placeholder="Search..." />
-      {% endfor %}
-    </div>
-
-    <div class="main-content">
-      <div class="team-name-container">
-        <div class="form-container">
-          <div class="form-row">
-            <label for="team_name">🎮 Team Name:</label>
-            <input type="text" id="team_name" placeholder="Enter team name" />
-            <button id="submit_team">💾 Save Team</button>
-          </div>
-
-          <div class="form-row">
-            <label for="team_status">🔥 Set Team Status:</label>
-            <input type="checkbox" id="team_status" name="is_active" value="1" />
-            <span class="checkbox-label">Is Active</span>
-          </div>
-        </div>
-
-        <div class="pokemon-preview" id="pokemon-preview">
-          <!-- JS will load selected Pokémon info here -->
-        </div>
-      </div>
-    </div>
+  <div class="top_navbar">
+        <button type="button" onclick="location.href='/home'">Back to Homepage</button>
+  </div>
+  
+  <div class="teams_header">
+    <header>Build Your First Pokémon Team!</header>
+  </div>
+  
+  <div class="pick_team_name">
+    <form id="set_team_name">
+      <label for="team_name">🎮 Team Name:</label>
+      <input type="text" id="team_name" placeholder="Enter team name" />
+      <button id="submit_team">💾 Save Team</button>
+      <br>
+      <label for="team_status">🔥 Set Team Status:</label>
+      <input type="checkbox" id="team_status" name="is_active" value="1" />
+      <span class="checkbox-label">Is Active</span>
+    </form>
+  </div>
+  
+  <div class="pick_pokemon">
+    <h3>Pick Six Pokémon</h3>
+    {% for i in range(1, 7) %}
+    <label for="pokemon{{ i }}">Pokémon {{ i }}</label>
+    <input type="text" name="pokemon{{ i }}" id="pokemon{{ i }}" placeholder="Search..." />
+    <button id="search_poke{{ i }}">Search</button>
+    <br><br>
+    {% endfor %}
   </div>
 
-  <script src="{{ url_for('static', filename='js/team.js') }}"></script>
-</body>
-</html>
-team_build.html
-2 KB
+  
+  <div class="display_pokemon">
+
+  </div>
+
+</div>
+  
+{% endblock %}

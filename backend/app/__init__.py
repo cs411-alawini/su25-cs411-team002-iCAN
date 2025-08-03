@@ -8,10 +8,13 @@ def create_app():
     # Create a new Flask app instance
     app = Flask(__name__)
     
+    app.secret_key = 'pikapika'
+
     # Import and register the Pokedex blueprint
-    from . import pokedex
+    from . import pokedex, auth, main
     app.register_blueprint(pokedex.bp)
+    app.register_blueprint(auth.bp)
+    app.register_blueprint(main.bp)    
     
-     # Register any other blueprints
     
     return app

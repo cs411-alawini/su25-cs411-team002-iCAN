@@ -1,0 +1,88 @@
+<!-- From Mengmeng -->
+{% extends "base.html" %}
+
+<!-- Tab title -->
+{% block title %}Start a New Battle{% endblock %}
+
+<!-- For login HTML body -->    
+{% block content %}
+
+<div class="battle_body">
+  <button id="home_button" type="button" onclick="location.href='/home'">Back to Homepage</button>
+  <h1>Start a New Battle</h1>
+
+  <div id="form-container">
+    <form method="POST">
+      <div class="form-row">
+        <label for="battle_id">Battle ID:</label>
+        <input type="text" id="battle_id" name="battle_id" required>
+      </div>
+
+      <div id="form-row">
+        <label for="user_team_id">Select Your Team:</label>
+        <select name="user_team_id" id="user_team_id" required><!--Pay Attention-->
+          {% for team in user_teams %}
+            <option value="{{ team.user_team_id }}" {% if selected_user_team_id == team.user_team_id %}selected{% endif %}><!--Pay Attention-->
+              {{ team.team_name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div id="form-row">
+        <label for="gym_id">Select Gym:</label>
+        <select name="gym_id" id="gym_id" required><!--Pay Attention-->
+          {% for gym in gyms %}
+            <option value="{{ gym.gym_id }}" {% if selected_gym_id == gym.gym_id %}selected{% endif %}><!--Pay Attention-->
+              {{ gym.gym_name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <input type="submit" value="Start Battle" class="start-battle-btn">
+    </form>
+  </div>
+
+  {% if user_team %}
+  <h3>Your Pokémon</h3>
+  <div class="result-box table-wrapper">
+    <table class="user_teams-table"><!--Pay Attention-->
+      <tr>
+        {% for key in user_team[0].keys() %}
+          <th>{{ key }}</th>
+        {% endfor %}
+      </tr>
+      {% for row in user_team %}
+      <tr>
+        {% for value in row.values() %}
+          <td>{{ value }}</td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  {% endif %}
+
+  {% if gym_team %}
+  <h3>Gym Team</h3>
+  <div class="result-box table-wrapper">
+    <table class="gym-table"><!--Pay Attention-->
+      <tr>
+        {% for key in gym_team[0].keys() %}
+          <th>{{ key }}</th>
+        {% endfor %}
+      </tr>
+      {% for row in gym_team %}
+      <tr>
+        {% for value in row.values() %}
+          <td>{{ value }}</td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

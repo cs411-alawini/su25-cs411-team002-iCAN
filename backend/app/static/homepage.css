@@ -1,4 +1,4 @@
-body {
+.homepage {
     margin: 0;
     font-family: Arial, sans-serif;
     display: grid;
@@ -11,7 +11,7 @@ body {
     height: 100vh;
 }
 
-.navbar {
+.homepage  .navbar {
     grid-area: navbar;
     background-color: #f3f3ff;
     padding: 10px;
@@ -21,14 +21,14 @@ body {
     border-right: 1px solid #ccc;
 }
 
-.navbar h2 {
+.homepage  .navbar h2 {
     text-align: center;
     font-weight: bold;
     color: #a078d3;
     font-size: 16px;
 }
 
-.navbar button {
+.homepage  .navbar button {
     padding: 10px;
     border: 2px solid #a078d3;
     border-radius: 6px;
@@ -36,7 +36,7 @@ body {
     cursor: pointer;
 }
 
-.header {
+.homepage  .header {
     grid-area: header;
     background-color: #e9e8e9;
     color: #a078d3;
@@ -47,14 +47,13 @@ body {
     font-size: 2rem;
     border-bottom: 1px solid #ccc;
     height: 100px;
-    /* Flexbox for vertical + horizontal centering */
     display: flex;
     justify-content: center;
     align-items: center;
 
 }
 
-.profile {
+.homepage  .profile {
     grid-area: profile;
     background-color: #f3f3ff;
     padding: 10px;
@@ -64,14 +63,14 @@ body {
     border-left: 1px solid #ccc;
 }
 
-.profile h2 {
+.homepage  .profile h2 {
     text-align: center;
     font-weight: bold;
     color: #a078d3;
     font-size: 16px;
 }
 
-.profile button {
+.homepage  .profile button {
     padding: 10px;
     border: 2px solid #a078d3;
     border-radius: 6px;
@@ -79,7 +78,7 @@ body {
     cursor: pointer;
 }
 
-.main {
+.homepage  .main {
     grid-area: main;
     display: flex;
     justify-content: center;
@@ -87,7 +86,7 @@ body {
     position: relative;
 }
 
-.arena {
+.homepage  .arena {
     border: 2px solid black;
     width: 500px;
     height: 300px;
@@ -98,12 +97,12 @@ body {
     padding: 20px;
 }
 
-.user {
+.homepage  .user {
     text-align: center;
     color: darkgreen;
 }
 
-.user-shape {
+.homepage  .user-shape {
     width: 0;
     height: 0;
     border-left: 40px solid transparent;
@@ -113,7 +112,7 @@ body {
     position: relative;
 }
 
-.user-shape::before {
+.homepage  .user-shape::before {
     content: '';
     position: absolute;
     top: -30px;
@@ -124,14 +123,14 @@ body {
     border-radius: 50%;
 }
 
-.gym {
+.homepage  .gym {
     width: 150px;
     height: 100px;
     border: 2px solid black;
     position: relative;
 }
 
-.gym::before {
+.homepage  .gym::before {
     content: '';
     position: absolute;
     top: -50px;
@@ -143,7 +142,7 @@ body {
     border-bottom: 50px solid black;
 }
 
-.enter-btn {
+.homepage  .enter-btn {
     position: absolute;
     bottom: 10px;
     right: 30px;
@@ -155,7 +154,7 @@ body {
     cursor: pointer;
 }
 
-.footer {
+.homepage  .footer {
       grid-area: footer;
       text-align: center;
       padding: 10px;

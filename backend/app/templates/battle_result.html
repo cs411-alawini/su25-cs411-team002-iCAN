@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Battle Result</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style/battle.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style/table.css') }}">
+</head>
+
+<body>
+  <h1>Battle Result</h1>
+
+  <div class="result-box">
+    <div class="result-row"><span class="result-label">Battle ID:</span> {{ battle_id }}</div>
+    <div class="result-row"><span class="result-label">Start Time:</span> {{ start }}</div>
+    <div class="result-row"><span class="result-label">End Time:</span> {{ end }}</div>
+    <div class="result-row">
+      <span class="result-label">Outcome:</span>
+      {% if outcome == 1 %}
+        <span class="win-text">Win 🎉</span>
+      {% else %}
+        <span class="loss-text">Loss ❌</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <h3>Your Pokémon Team</h3>
+  <div class="result-box table-wrapper">
+    <table class="user_teams-table"><!--Pay Attention-->
+      <tr>
+        {% for key in user_team[0].keys() %}
+          <th>{{ key }}</th>
+        {% endfor %}
+      </tr>
+      {% for row in user_team %}
+        <tr>
+          {% for value in row.values() %}
+            <td>{{ value }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <h3>Gym Team</h3>
+  <div class="result-box table-wrapper">
+    <table class="gym-table"><!--Pay Attention-->
+      <tr>
+        {% for key in gym_team[0].keys() %}
+          <th>{{ key }}</th>
+        {% endfor %}
+      </tr>
+      {% for row in gym_team %}
+        <tr>
+          {% for value in row.values() %}
+            <td>{{ value }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  {% if badge %}
+  <div class="result-box badge-section">
+    <h3>🏅 Badge Earned: {{ badge.badge_title }}</h3>
+    <img src="{{ badge.badge_image }}" alt="Badge Image">
+  </div>
+  {% else %}
+  <div class="result-box">
+    <p>No badge earned. Better luck next time!</p>
+  </div>
+  {% endif %}
+
+  <a href="{{ url_for('start_battle') }}" class="back-link">← Start Another Battle</a><!--Pay Attention-->
+</body>
+
+</html>
