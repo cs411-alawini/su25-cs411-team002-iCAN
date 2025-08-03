@@ -1,3 +1,5 @@
+from mysql.connector import connect
+from mysql.connector.cursor import MySQLCursorDict
 from flask import jsonify, render_template, Blueprint
 from app.db import getconn
 
@@ -104,7 +106,7 @@ def search_user_team_members():
         conn = getconn()
         print('Connection open.')
 
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor(cursor_class=MySQLCursorDict)
 
         query = "SELECT * FROM user_poke_team_members WHERE user_team_id = %s;"
         cursor.execute(query, (user_team_id,))
@@ -129,7 +131,7 @@ def get_available_moves(pokedex_id):
     conn = None
     try:
         conn = getconn()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor(cursor_class=MySQLCursorDict)
 
         # Get name + image
         cursor.execute("SELECT name, image_url FROM pokedex_entries WHERE pokedex_id = %s;", (pokedex_id,))
@@ -173,7 +175,7 @@ def add_user_team_member():
             return jsonify({"error": "All 4 moves must be different"}), 400
 
         conn = getconn()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor(cursor_class=MySQLCursorDict)
 
         # Count current members on the team
         cursor.execute("SELECT COUNT(*) AS count FROM user_poke_team_members WHERE user_team_id = %s", (team_id,))
@@ -268,7 +270,7 @@ def edit_team_member():
         member_id = request.args.get('user_team_member_id')
 
         conn = getconn()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor(cursor_class=MySQLCursorDict)
 
         # Get team member
         cursor.execute("""
@@ -317,7 +319,7 @@ def update_team_member():
             return jsonify({"error": "All 4 moves must be different"}), 400
 
         conn = getconn()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor(cursor_class=MySQLCursorDict)
 
         # Get PP for each move
         pp_values = []
