@@ -1,14 +1,18 @@
-from flask import jsonify, render_template, Blueprint
+# From Pierre
+from flask import jsonify, render_template, Blueprint, request
 from app.db import getconn
 
 
-# Routes will go here e.g. @bp.route('/user-teams')
-bp = Blueprint('user_teams', __name__, url_prefix='/user-teams', template_folder='templates')
+# Routes will go here e.g. @bp.route('/teams')
+bp = Blueprint('teams', __name__, url_prefix='/teams', template_folder='templates')
 
-# Route for displaying ALL user teams
-# Create the endpoint at url_prefix='/user-teams'
+
+# Create the endpoint at url_prefix='/teams'
 @bp.route('/', methods=['GET'])
-def get_all_user_teams():
+def get_all_teams():
+    """
+    This displays all teams for a user, in one page.
+    """
     conn = None
     try:  
         # Get the database connection
@@ -36,7 +40,7 @@ def get_all_user_teams():
         #return jsonify(results)
 
         # Rendering results in viewer
-        return render_template('user-teams.html', entries=results)
+        return render_template('teams.html', entries=results)
 
     except Exception as e:
         print(f"There was an error fetching data: {e}")
@@ -48,10 +52,13 @@ def get_all_user_teams():
             conn.close()
             print('Connection closed.')
 
-# Route for displaying ONE user team by its ID
-# Create the endpoint at url_prefix='/user-teams/1' t
+
+# Create the endpoint at url_prefix='/teams/1' t
 @bp.route('/<int:user_team_id>', methods=['GET'])
-def get_one_user_team(user_team_id):
+def get_single_team(user_team_id):
+    """
+    Display only one team, by its team id.
+    """
     conn = None
     try:  
         # Get the database connection
@@ -90,19 +97,13 @@ def get_one_user_team(user_team_id):
             conn.close()
             print('Connection closed.')
 
-from flask import request, redirect, url_for
-import mysql.connector
-from mysql.connector import connect
-
-
-
-from flask import request, redirect, url_for, session, jsonify
-
-from app.db import getconn
 
 # Route for creating a new team
 @bp.route('/create', methods=['POST'])
-def create_user_team():
+def create_team():
+    """
+    Create a new team.
+    """
     conn = None
     try:
         # Get form input

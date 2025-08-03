@@ -1,5 +1,4 @@
-from mysql.connector import connect
-from mysql.connector.cursor import MySQLCursorDict
+# From Pierre
 from flask import jsonify, render_template, Blueprint
 from app.db import getconn
 
