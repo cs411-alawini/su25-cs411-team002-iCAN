@@ -9,14 +9,16 @@ bp = Blueprint('teams', __name__, url_prefix='/teams', template_folder='template
 @bp.route('/create', methods=['GET', 'POST'])
 def create_team():
     """
-    Show the create team page, and handle Pokémon search.
+    Display the create-a-team page. 
     """
+    # Get values from sessions
     team = session.get('team', [])
     user_team_id = session.get('user_team_id')
     user_id = session.get('user_id')
-
-    
     team_name = ""
+
+    # We are editing an existing team, using information from
+    # the database (redirect from Edit)
     if user_team_id and user_id:
         db_conn = getconn()
         try:
@@ -29,15 +31,16 @@ def create_team():
                 cursor.execute(get_team_name,(user_team_id, user_id))
                 team_name_results = cursor.fetchone()
                 if team_name_results:
-                    team_name = team_name_results['team_name']
+                    team_name = team_name_results["team_name"]
                     print(f"current team name is {team_name}")
                 else:
-                    team_name = ''
+                    team_name = ""
         finally:
             db_conn.close()
 
+    # Search for a Pokemon (user pressed Search)
     if request.method == 'POST':
-        # Get the search term from the form
+        # Get the search term (user input) from the form
         user_pokemon_input = request.form.get('pokemon_search', '').strip()
 
         results = []
@@ -65,9 +68,15 @@ def create_team():
 
 @bp.route('/add', methods=['POST'])
 def add_pokemon():
+    """
+    Add pokemon to the current team in session.
+    """
     pokemon = request.form.get('add_pokemon')
     if pokemon:
         team = session.get('team', [])
+        # Team must be less than six pokemon and
+        # user cannot have duplicates of the same
+        # pokemon
         if len(team) < 6 and pokemon not in team:
             team.append(pokemon)
             session['team'] = team
@@ -77,7 +86,9 @@ def add_pokemon():
 @bp.route('/update', methods=['POST'])
 def update_team():
     """
-    Users must remember to save team after pressing Edit.
+    Update the team. Once the user presses "Save" for the team,
+        we will delete the original pokemon on the team, but
+        will maintain the same user team id.
     """
     user_team_id = session.get('user_team_id')
     if not user_team_id:
@@ -94,6 +105,9 @@ def update_team():
     db_conn = getconn()
     try:
         with db_conn.cursor() as cursor:
+
+            print("We deleted the team.")
+
             # Delete pokemon on team to prepare for update
             delete_team = """
                 DELETE 
@@ -216,6 +230,8 @@ def save_team_name():
 def new_team():
     """
     Clear session and redirect to create team form with a blank slate.
+        This is necessary to differentiate between creating a new
+        team and updating an already exisiting team.
     """
     session.pop('team', None)
     session.pop('team_name', None)
@@ -225,10 +241,18 @@ def new_team():
 
 @bp.route('/delete/<int:team_id>', methods=['POST'])
 def delete_team(team_id):
+    """
+    The user has pressed the Delete button on the teams
+        home page. This will delete the team in the 
+        database, after making sure the team belongs
+        to the user's user id.
+    """
+    # Make sure the user's id is still in session
     user_id = session.get('user_id')
     if not user_id:
         return redirect(url_for('auth.login'))
 
+    # Connect to GCP
     db_conn = getconn()
     try:
         with db_conn.cursor() as cursor:
@@ -268,14 +292,19 @@ def delete_team(team_id):
 
 @bp.route('/edit/<int:team_id>', methods=['GET'])
 def edit_team(team_id):
+    """
+    User has pressed Edit on the teams home page.
+    """
+    # Make sure that the user's id is still in session.
     user_id = session.get('user_id')
     if not user_id:
         return redirect(url_for('auth.login'))
 
+    # Connect to GCP
     db_conn = getconn()
     try:
         with db_conn.cursor() as cursor:
-            # Get the team name
+            # Get the team name for the team the user wants to edit
             get_team_name = """
                 SELECT team_name 
                 FROM user_teams 
@@ -286,10 +315,11 @@ def edit_team(team_id):
             if not get_team_name_result:
                 return redirect(url_for('teams.load_teams'))
 
+            # Load this information into session, just in case
             session['team_name'] = get_team_name_result['team_name']
             session['user_team_id'] = team_id
 
-            # Get the Pokémon names on the team
+            # Get the Pokemon names on the team
             get_poke_names = """
                 SELECT PE.name 
                 FROM user_poke_team_members UPT JOIN pokedex_entries PE 
