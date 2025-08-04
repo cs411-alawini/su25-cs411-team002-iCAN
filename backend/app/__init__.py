@@ -16,5 +16,7 @@ def create_app():
     app.register_blueprint(auth.bp)
     app.register_blueprint(main.bp)    
     app.register_blueprint(teams.bp)
+    app.register_blueprint(battle.bp)
+    app.register_blueprint(gym.bp)
 
     return app
