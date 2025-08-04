@@ -33,8 +33,8 @@ def get_pokemon_by_name(name):
         conn = getconn()
         cursor = conn.cursor()
 
-        get_pokemon_name = "SELECT * FROM pokedex_entries WHERE LOWER(name) = LOWER(%s);"
-        cursor.execute(get_pokemon_name, (name,))
+        get_pokemon_name = "SELECT * FROM pokedex_entries WHERE LOWER(name) LIKE LOWER(%s);"
+        cursor.execute(get_pokemon_name, (f"%{name}%",))
         pokemon_name = cursor.fetchone()
         cursor.close()
 

@@ -63,13 +63,14 @@
           <input type="text" name="pokemon{{ i }}" id="pokemon{{ i }}" 
                 value="{{ team[i] if i < team|length else '' }}" />
           {% if i < team|length %}
-            <button type="submit" name="remove" value="{{ i }}">Remove</button>
+            <button type="button" class="remove-button" data-index="{{ i }}">Remove</button>
           {% endif %}
           <br><br>
         {% endfor %}
         <button type="submit" name="save_team">💾 Save Team</button>
       </form>
     </div>
+
 
   </div> <!-- end create_teams_body -->
 </div> <!-- end create_team_wrapper -->
@@ -85,6 +86,16 @@
     input.focus();
   });
 </script>
+<script>
+  document.querySelectorAll('.remove-button').forEach(button => {
+    button.addEventListener('click', () => {
+      const index = button.getAttribute('data-index');
+      const input = document.getElementById(`pokemon${index}`);
+      input.value = '';
+    });
+  });
+</script>
+
 {% endif %}
 
 {% endblock %}
