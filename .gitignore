@@ -1,0 +1,13 @@
+# Environment variables
+.env 
+
+# Python virtual environment
+.venv/ 
+venv/
+
+# Python 
+__pycache__/ 
+*.py[cod]
+
+# macOS 
+.DS_Store../.venv/
