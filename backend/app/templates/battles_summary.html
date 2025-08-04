@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Battle Result</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style/battle.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style/table.css') }}">
+</head>
+
+<body>
+  <h1>Battle Result Lookup</h1>
+
+  <!-- Battle Lookup Form -->
+  <div class="result-box">
+    <form method="POST" action="{{ url_for('battles.start_battle') }}">
+      <div class="result-row">
+        <label for="battle_id" class="result-label">Battle ID:</label>
+        <input type="text" id="battle_id" name="battle_id" required>
+      </div>
+      <div class="result-row">
+        <label for="user_team_id" class="result-label">User Team ID:</label>
+        <input type="text" id="user_team_id" name="user_team_id" required>
+      </div>
+      <div class="result-row">
+        <label for="gym_id" class="result-label">Gym ID:</label>
+        <input type="text" id="gym_id" name="gym_id" required>
+      </div>
+      <div class="result-row">
+        <button type="submit">View Battle Result</button>
+      </div>
+    </form>
+  </div>
+
+  {% if battle_id %}
+  <!-- Battle Summary -->
+  <div class="result-box">
+    <div class="result-row"><span class="result-label">Battle ID:</span> {{ battle_id }}</div>
+    <div class="result-row"><span class="result-label">Start Time:</span> {{ start }}</div>
+    <div class="result-row"><span class="result-label">End Time:</span> {{ end }}</div>
+    <div class="result-row">
+      <span class="result-label">Outcome:</span>
+      {% if outcome == 1 %}
+        <span class="win-text">Win 🎉</span>
+      {% else %}
+        <span class="loss-text">Loss ❌</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- User Team Table -->
+  <h3>Your Pokémon Team</h3>
+  <div class="result-box table-wrapper">
+    <table class="user_teams-table">
+      <tr>
+        {% for key in user_team[0].keys() %}
+          <th>{{ key }}</th>
+        {% endfor %}
+      </tr>
+      {% for row in user_team %}
+        <tr>
+          {% for value in row.values() %}
+            <td>{{ value }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <!-- Gym Team Table -->
+  <h3>Gym Team</h3>
+  <div class="result-box table-wrapper">
+    <table class="gym-table">
+      <tr>
+        {% for key in gym_team[0].keys() %}
+          <th>{{ key }}</th>
+        {% endfor %}
+      </tr>
+      {% for row in gym_team %}
+        <tr>
+          {% for value in row.values() %}
+            <td>{{ value }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <!-- Badge Section -->
+  {% if badge %}
+  <div class="result-box badge-section">
+    <h3>🏅 Badge Earned: {{ badge.badge_title }}</h3>
+    <img src="{{ badge.badge_image }}" alt="Badge Image">
+  </div>
+  {% else %}
+  <div class="result-box">
+    <p>No badge earned. Better luck next time!</p>
+  </div>
+  {% endif %}
+  {% endif %}
+
+</body>
+
+</html>

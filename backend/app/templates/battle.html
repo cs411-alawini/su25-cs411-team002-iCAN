@@ -22,10 +22,10 @@
 <body>
 
 <div class="battle-container"
-     data-user-team-id="{{ state.player_pokemon.user_team_id }}"
-     data-gym-id="{{ state.opponent_pokemon.gym_id }}"
-     data-player-member-id="{{ state.player_pokemon.user_team_member_id }}"
-     data-opponent-member-id="{{ state.opponent_pokemon.gym_team_member_id }}">
+     data-user-team-id="{{ state.player_pokemon.team_id }}"
+     data-gym-id="{{ state.opponent_pokemon.team_id }}"
+     data-player-member-id="{{ state.player_pokemon.member_id }}"
+     data-opponent-member-id="{{ state.opponent_pokemon.member_id }}">
 
     <div class="battle-arena">
         <div class="pokemon-display">
@@ -98,29 +98,99 @@
         alert("Check the browser's developer console (F12) to see your full team data!");
     }
 
-    /**
-     * Handles the logic when a user clicks a move button.
-     * This will eventually call your sp_ProcessTurn procedure.
-     */
-    async function handleMoveClick(moveSlot) {
-        const dialogueBox = document.getElementById('dialogue-box');
-        dialogueBox.innerHTML = '<p>Processing turn...</p>';
+async function handleMoveClick(moveSlot) {
+    const dialogueBox = document.getElementById('dialogue-box');
+    const container = document.querySelector('.battle-container');
+    dialogueBox.innerHTML = '<p>Processing turn...</p>';
 
-        // This is where you would build the call to your 'process_turn' API route.
-        // For now, we'll just simulate a result.
-        console.log(`User selected move in slot: ${moveSlot}`);
+    // --- Hide the controls while the turn is processing ---
+    document.getElementById('action-menu').style.display = 'none';
+    document.getElementById('move-menu').style.display = 'none';
+
+    // --- Gather all data needed for the procedure ---
+    const turnData = {
+        attacker_party: 'USER',
+        attacker_team_id: container.dataset.userTeamId,
+        attacker_member_id: container.dataset.playerMemberId,
+        defender_party: 'GYM',
+        defender_team_id: container.dataset.gymId,
+        defender_member_id: container.dataset.opponentMemberId,
+        move_slot: moveSlot,
+        player_team_id: container.dataset.userTeamId,
+        player_member_id: container.dataset.playerMemberId,
+        opponent_team_id: container.dataset.gymId,
+        opponent_member_id: container.dataset.opponentMemberId
+    };
+
+    // --- Call the Player's Turn API ---
+    const response = await fetch('/battle/api/turn', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(turnData),
+    });
+    const result = await response.json();
+
+    // --- Update the UI with the player's turn results ---
+    if (result.success) {
+        dialogueBox.innerHTML = `<p>${result.message}</p>`;
+
+        const opponentHpElement = document.getElementById('opponent-hp');
+        const opponentHpBar = document.getElementById('opponent-hp-bar');
+        const opponentMaxHp = {{ state.opponent_pokemon.max_hp }};
+        opponentHpElement.innerText = result.opponent_hp;
+        opponentHpBar.style.width = (result.opponent_hp / opponentMaxHp * 100) + '%';
         
-        // --- Placeholder for the real API call ---
-        // const response = await fetch('/battle/api/turn', { method: 'POST', ... });
-        // const result = await response.json();
+        // If the opponent didn't faint, trigger the AI's turn after a delay
+        if (!result.message.includes('fainted')) {
+            setTimeout(triggerAITurn, 2000); // Wait 2 seconds
+        }
         
-        // Update UI based on the result
-        dialogueBox.innerHTML = `<p>This is where the result of the move would be displayed!</p>`;
-        
-        // Switch back to the main action menu after the turn
-        document.getElementById('action-menu').style.display = 'flex';
-        document.getElementById('move-menu').style.display = 'none';
+    } else {
+        dialogueBox.innerHTML = `<p>An error occurred: ${result.message}</p>`;
     }
+}
+
+async function triggerAITurn() {
+    const dialogueBox = document.getElementById('dialogue-box');
+    const container = document.querySelector('.battle-container');
+    dialogueBox.innerHTML = '<p>The opponent is making a move...</p>';
+
+    // Gather the same data as before to send to the AI's brain
+    const turnData = {
+        player_team_id: container.dataset.userTeamId,
+        player_member_id: container.dataset.playerMemberId,
+        opponent_team_id: container.dataset.gymId,
+        opponent_member_id: container.dataset.opponentMemberId
+    };
+
+    // Call the new AI API route
+    const response = await fetch('/battle/api/ai-turn', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(turnData),
+    });
+    const result = await response.json();
+
+    if (result.success) {
+        dialogueBox.innerHTML = `<p>${result.message}</p>`;
+
+        // Update the PLAYER'S HP bar this time
+        const playerHpElement = document.getElementById('player-hp');
+        const playerHpBar = document.getElementById('player-hp-bar');
+        const playerMaxHp = {{ state.player_pokemon.max_hp }};
+        playerHpElement.innerText = result.player_hp;
+        playerHpBar.style.width = (result.player_hp / playerMaxHp * 100) + '%';
+    } else {
+        dialogueBox.innerHTML = `<p>An error occurred during AI turn: ${result.message}</p>`;
+    }
+
+    // After the AI turn, re-enable the player's controls
+    document.getElementById('action-menu').style.display = 'flex';
+    document.getElementById('move-menu').style.display = 'none';
+    if (!result.message.includes('fainted')) {
+        dialogueBox.innerHTML = `<p>What will {{ state.player_pokemon.pokemon_name }} do?</p>`;
+    }
+}
 
 </script>
 
