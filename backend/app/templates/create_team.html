@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+<!-- Tab title -->
+{% block title %}Create Team{% endblock %}
+
+{% block content %}
+<div class="create_team_wrapper">
+  <div class="create_teams_body">
+
+    <div class="top_navbar">
+      <button type="button" onclick="location.href='/home'">Back to Homepage</button>
+      <button type="button" onclick="location.href='/teams'">Back to Teams</button>
+    </div>
+    
+    <div class="teams_header">
+      <header>Build Your First Pokémon Team!</header>
+    </div>
+    
+    <div class="pick_team_name">
+      <form id="set_team_name" method="POST" action="{{ url_for('teams.save_team_name') }}">
+        <label for="team_name">🎮 Team Name:</label>
+        <input type="text" name="team_name" id="team_name" placeholder="Enter team name" 
+          value="{{ team_name }}" 
+          {% if team_name %} disabled {% endif %}/>
+        {% if not team_name %}
+        <button id="submit_team" type="submit">💾 Save Name</button>
+        {% endif %}
+        {% if team_name %}
+        <button id="edit_team" type="button">✏️ Edit Team Name</button>
+        {% endif %}
+        <br>
+      </form>
+    </div>
+  
+    <div class="search_pokemon">
+      <h3>Search for Pokémon</h3>
+      <form class="search_team_pokemon" method="POST" action="/teams/create">
+        <label for="pokemon_search">Pokémon Name</label>
+        <input type="text" name="pokemon_search" id="pokemon_search" placeholder="Search..." />
+        <button type="submit" id="search_poke">Search</button>
+        <br><br>
+      </form>
+      <div class="display_pokemon">
+        {% if pokemon_results %}
+          {% for pokemon in pokemon_results %}
+            <form method="POST" action="/teams/add" class="pokemon_result">
+              <span class="pokemon_name">{{ pokemon.name }}</span>
+              <input type="hidden" name="add_pokemon" value="{{ pokemon.name }}">
+              <button type="submit">Add Pokemon</button>
+            </form>
+          {% endfor %}
+        {% else %}
+          <p>No Pokémon found.</p>
+        {% endif %}
+      </div>
+    </div>
+  
+    <div class="pick_pokemon">
+      <h3>Current Pokémon Team</h3>
+      <form method="POST" action="/teams/update">
+        {% for i in range(0, 6) %}
+          <label for="pokemon{{ i }}">Pokémon {{ i + 1 }}</label>
+          <input type="text" name="pokemon{{ i }}" id="pokemon{{ i }}" 
+                value="{{ team[i] if i < team|length else '' }}" />
+          {% if i < team|length %}
+            <button type="button" class="remove-button" data-index="{{ i }}">Remove</button>
+          {% endif %}
+          <br><br>
+        {% endfor %}
+        <button type="submit" name="save_team">💾 Save Team</button>
+      </form>
+    </div>
+
+
+  </div> <!-- end create_teams_body -->
+</div> <!-- end create_team_wrapper -->
+
+{% if team_name %}
+<script>
+  document.getElementById('edit_team').addEventListener('click', function() {
+    const input = document.getElementById('team_name');
+    const saveButton = document.getElementById('submit_team');
+
+    input.disabled = false;
+    saveButton.disabled = false;
+    input.focus();
+  });
+</script>
+<script>
+  document.querySelectorAll('.remove-button').forEach(button => {
+    button.addEventListener('click', () => {
+      const index = button.getAttribute('data-index');
+      const input = document.getElementById(`pokemon${index}`);
+      input.value = '';
+    });
+  });
+</script>
+
+{% endif %}
+
+{% endblock %}

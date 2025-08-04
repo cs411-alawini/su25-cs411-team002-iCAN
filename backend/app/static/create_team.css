@@ -1,0 +1,146 @@
+.create_team_wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.create_team_wrapper .create_teams_body {
+  display: grid;
+  grid-template-columns: minmax(0, 600px) minmax(0, 600px);
+  grid-template-rows: auto auto auto auto;
+  gap: 30px;
+  padding: 30px 0;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+}
+
+.create_team_wrapper .create_teams_body > * {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  box-sizing: border-box;
+}
+
+.create_team_wrapper .create_teams_body .pick_pokemon {
+  max-width: 100%;
+  width: 100%;
+}
+
+.create_team_wrapper .create_teams_body .top_navbar {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;   /* stack vertically */
+  align-items: flex-end;    /* align buttons to right */
+  gap: 10px;                /* space between buttons */
+  padding-bottom: 10px;     /* small spacing below */
+  /* remove any big height or margin that might add extra space */
+  height: auto;
+}
+
+
+.create_team_wrapper .create_teams_body .teams_header {
+  grid-column: 1 / -1;
+  background-color: #e9e8e9;
+  color: #a078d3;
+  font-weight: bold;
+  text-align: center;
+  padding: 10px;
+  font-size: 2rem;
+  border-bottom: 1px solid #ccc;
+}
+
+.create_team_wrapper .create_teams_body .pick_team_name {
+  background-color: #ffffff;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  grid-column: 1;
+  grid-row: 3;
+}
+
+.create_team_wrapper .create_teams_body .search_pokemon {
+  background-color: #f7f7f7;
+  padding: 20px;
+  border: 1px dashed #aaa;
+  border-radius: 10px;
+  grid-column: 1;
+  grid-row: 4;
+}
+
+.create_team_wrapper .create_teams_body .search_pokemon .display_pokemon {
+  margin-top: 15px;
+  padding: 10px;
+  border: 1px solid #888;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.create_team_wrapper .create_teams_body .pick_pokemon {
+  background-color: #fff6ff;
+  border: 3px solid #d48af7;
+  padding: 20px;
+  border-radius: 20px;
+  font-family: 'Verdana', sans-serif;
+  box-shadow: 0 0 12px rgba(211, 143, 255, 0.3);
+  grid-column: 2;
+  grid-row: 3 / span 2;
+  align-self: start;
+}
+
+.create_team_wrapper .create_teams_body .pick_pokemon h3 {
+  text-align: center;
+}
+
+.create_team_wrapper .create_teams_body .pokemon_result {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #fafafa;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  font-size: 1.1rem;
+  gap: 10px;
+}
+
+.create_team_wrapper .create_teams_body .pokemon_name {
+  font-weight: bold;
+  color: #4b0082;
+}
+
+.create_team_wrapper .create_teams_body .pokemon_result button {
+  margin-left: auto;
+  padding: 5px 12px;
+  background-color: #a078d3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.create_team_wrapper .create_teams_body .pokemon_result button:hover {
+  background-color: #8c62c0;
+}
+
+/* Optional: prevent horizontal scroll on very narrow windows */
+.create_team_wrapper body,
+.create_team_wrapper html {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Responsive: stack columns on narrow screens */
+@media (max-width: 700px) {
+  .create_team_wrapper .create_teams_body {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto auto;
+  }
+
+  .create_team_wrapper .create_teams_body .pick_team_name,
+  .create_team_wrapper .create_teams_body .search_pokemon,
+  .create_team_wrapper .create_teams_body .pick_pokemon {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}

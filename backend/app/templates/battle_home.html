@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Start a New Battle{% endblock %}
+
+{% block content %}
+<div class="battle_body">
+  <button id="home_button" type="button" onclick="location.href='/home'">Back to Homepage</button>
+  <h1>Start a New Battle</h1>
+
+  <div id="form-container">
+    <form method="POST">
+      <!-- Select Your Team -->
+      <div class="form-row">
+        <label for="user_team_id">Select Your Team:</label>
+        <select name="user_team_id" id="user_team_id" required>
+          <option value="" disabled {% if not selected_user_team_id %}selected{% endif %}>Select your team...</option>
+          {% for team in user_teams %}
+            <option value="{{ team.user_team_id }}" {% if selected_user_team_id == team.user_team_id %}selected{% endif %}>
+              {{ team.team_name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Select Gym Leader -->
+      <div class="form-row">
+        <label for="gym_id">Select Gym Leader:</label>
+        <select name="gym_id" id="gym_id" required>
+          <option value="" disabled {% if not selected_gym_id %}selected{% endif %}>Select a gym leader...</option>
+          {% for gym in gyms %}
+            <option value="{{ gym.gym_id }}" {% if selected_gym_id == gym.gym_id %}selected{% endif %}>
+              {{ gym.gym_leader }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <input type="submit" value="Start Battle" class="start-battle-btn">
+    </form>
+  </div>
+</div>
+{% endblock %}

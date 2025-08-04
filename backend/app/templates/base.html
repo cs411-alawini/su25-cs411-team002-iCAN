@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- HTML settings in browser-->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="icon" href="{{ url_for('static', filename='pokeball.png') }}" type="image/png">
+
+    <!-- Style sheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='homepage.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='teams_home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='create_team.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='battle.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='badges.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='pokedex.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    
+    
+    <!-- Each HTML page has its own tab title-->
+    <title>{% block title %}Default Title{% endblock %}</title>
+</head>
+<body>
+    <!-- Each HTML page has its own HTML design -->
+    {% block content %}{% endblock %}
+</body>
+</html>

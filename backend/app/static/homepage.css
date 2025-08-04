@@ -1,0 +1,188 @@
+.homepage {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: grid;
+    grid-template-columns: 200px 1fr 150px;
+    grid-template-rows: auto 1fr 50px;
+    grid-template-areas:
+        "navbar header profile"
+        "navbar main profile"
+        "footer footer footer";
+    height: 100vh;
+}
+
+.homepage .navbar {
+    grid-area: navbar;
+    background-color: #f3f3ff;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-right: 1px solid #ccc;
+}
+
+.homepage .navbar h2 {
+    text-align: center;
+    font-weight: bold;
+    color: #a078d3;
+    font-size: 16px;
+}
+
+.homepage .navbar button {
+    padding: 10px;
+    border: 2px solid #a078d3;
+    border-radius: 6px;
+    background-color: #ddd2f8;
+    cursor: pointer;
+}
+
+.homepage .header {
+    grid-area: header;
+    background-color: #e9e8e9;
+    color: #a078d3;
+    font-weight: bold;
+    text-shadow: #663300;
+    text-align: center;
+    padding: 10px;
+    font-size: 2rem;
+    border-bottom: 1px solid #ccc;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.homepage .profile {
+    grid-area: profile;
+    background-color: #f3f3ff;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-left: 1px solid #ccc;
+}
+
+.homepage .profile h2 {
+    text-align: center;
+    font-weight: bold;
+    color: #a078d3;
+    font-size: 16px;
+}
+
+.homepage .profile button {
+    padding: 10px;
+    border: 2px solid #a078d3;
+    border-radius: 6px;
+    background-color: #ddd2f8;
+    cursor: pointer;
+}
+
+.homepage .main {
+    grid-area: main;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.homepage .arena {
+    border: 2px solid black;
+    width: 500px;
+    height: 300px;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 20px;
+}
+
+.homepage .user {
+    text-align: center;
+}
+
+/* User image container */
+.homepage .user-image {
+    width: 120px;
+    height: auto;
+    margin: 0 auto 10px;
+}
+
+.homepage .user-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* Gym container */
+.homepage .gym {
+    width: 150px;
+    height: 200px;
+    border: 2px solid black;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.homepage .gym img {
+    max-width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Enter Gym button */
+.homepage .enter-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 30px;
+    padding: 10px 20px;
+    background-color: #ffe6cc;
+    border: 2px solid #ffa366;
+    border-radius: 50px;
+    color: #663300;
+    cursor: pointer;
+}
+
+/* Footer */
+.homepage .footer {
+    grid-area: footer;
+    text-align: center;
+    padding: 10px;
+    background-color: #e6e6e6;
+    border-top: 1px solid #ccc;
+}
+
+
+.homepage .arena {
+    border: 2px solid black;
+    width: 500px;
+    height: 300px;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 20px;
+
+    background-image: url('/static/gym_image.jpg');
+    background-size: cover;       /* Fill container, may crop */
+    background-repeat: no-repeat;
+    background-position: center;
+
+    /* Optional overlay for better contrast */
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+}
+
+.homepage .user {
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.6);
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    display: inline-block;
+}
+

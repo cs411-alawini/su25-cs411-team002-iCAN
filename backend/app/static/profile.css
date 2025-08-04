@@ -1,0 +1,135 @@
+/* Container for the entire profile page */
+.profile_container {
+    display: grid;
+    grid-template-columns: 1.2fr 3fr;
+    grid-template-rows: auto;
+    gap: 20px;
+    border: 2px solid #444;
+    border-radius: 8px;
+    margin: 20px auto;
+    max-width: 900px;
+    padding: 30px;
+    background: #fafafa;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #222;
+}
+
+/* Left side summary with user image and info */
+.left_summary {
+    border-right: 1px solid #ddd;
+    padding-right: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+}
+
+/* Circle container for user image */
+.user_image_container {
+    width: 150px;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 3px solid #a078d3;
+    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.3);
+}
+
+/* Profile image styling */
+.user_image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Username text */
+.username_display {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #a078d3;
+}
+
+/* Badge level text */
+.badge_status {
+    font-size: 1.1rem;
+    color: #555;
+    font-weight: 600;
+}
+
+/* Back to homepage button container (at the top) */
+.top_navbar {
+    text-align: left;
+    margin: 20px 40px 0 40px;
+}
+
+/* Button style for back button */
+.top_navbar button {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 10px 18px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.top_navbar button:hover {
+    background-color: #0056b3;
+}
+
+/* Right side info area */
+.right_info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+/* Info boxes styling */
+.top_user_info, .game_stats {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+}
+
+/* Definition list styling for labels and values */
+dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 8px 20px;
+    font-size: 1rem;
+}
+
+dt {
+    font-weight: 700;
+    color: #333;
+}
+
+dd {
+    margin: 0;
+    color: #555;
+}
+
+/* Delete account button container */
+.delete_account {
+    text-align: right;
+}
+
+/* Delete button styling */
+.delete_button {
+    background-color: #dc3545;
+    border: none;
+    color: white;
+    padding: 10px 22px;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.delete_button:hover {
+    background-color: #a71d2a;
+}

@@ -1,47 +1,41 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-  <!-- Head information -->
-  <head>
-    <!-- Insert stylesheet -->
-    <link rel="stylesheet" href="../static/style.css">
-    <!-- Setting the viewport to make website look good on all devices -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-  </head>
+<!-- Tab title -->
+{% block title %}Pokemon Boss Rush{% endblock %}
 
+<!-- For login HTML body -->    
+{% block content %}
+<div class="homepage">
+  <div class="navbar">
+    <h2>GAME NAVIGATION</h2>
+    <button onclick="location.href='/teams'">Teams</button>
+    <button onclick="location.href='/gyms'">Gyms</button>
+    <button onclick="location.href='/pokedex'">Pokedex</button>
+    <button onclick="location.href='/badges'">Badges</button>
+  </div>
 
-  <!-- Body Information -->
-<body>
-    <div class="homePage">
-        <div class="header"></div>
-        <!-- Left Navbar  -->
-        <div class="game-navbar">
-            <button type="button" id="teams-button">Teams</button>
-            <button type="button" id="gyms-button">Gyms</button>
-            <button type="button" id="pokedex-button">Pokedex</button>
-            <button type="button" id="badges-button">Badges</button>
+  <div class="header">POKEMON BOSS RUSH</div>
+  
+  <div class="profile">
+    <h2>Check Your Profile</h2>
+    <button onclick="location.href='/auth/'">Logout</button>
+    <button onclick="location.href='/profile'">Profile</button>
+  </div>
+
+  <div class="main">
+    <div class="arena">
+      <div class="user">
+        <div class="user-image">
+          <img src="{{ url_for('static', filename='user.webp') }}" alt="User Image">
         </div>
-
-        <!-- Main page  -->
-        <div class="main-area">
-            <div class="user-gym">
-
-            </div>
-            <div class="enter-gym-area">
-                <button type="button" id="enter-gym">Enter Gym</button>
-            </div>
-            
-        </div>
-
-        <!-- Right Navbar  -->
-        <div class="profile-navbar">
-            <button type="button" id="logout-button">Logout</button>
-            <button type="button" id="profile-button">Profile</button>
-        </div>
-
-        <div class="footer"></div>
+        <div>{{ user }}</div>
+      </div>
+      <!--div class="gym">
+        <img src="{{ url_for('static', filename='gym_image.jpg') }}" alt="Gym Image">
+      </div-->
+      <button class="enter-btn" onclick="location.href='/battle'">Enter Gym</button>
     </div>
-<!-- Insert JS Script -->
-</body>
-
-</html>
+  </div>
+  <div class="footer">~~~~~ Enjoy The Game ~~~~</div>
+</div>
+{% endblock %}
