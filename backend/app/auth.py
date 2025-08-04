@@ -49,10 +49,10 @@ def login():
                     # Insert new user using the STORED PROCEDURE AddNewUser
                     new_user_query = "INSERT INTO users (user_name, pwd, email, is_active) VALUES (%s, %s, %s, %s)"
                     sql_cursor.execute(new_user_query, (username, password, email, 1))
+                    user_id = sql_cursor.lastrowid
                     db_conn.commit()
 
                     session['username'] = username
-                    user_id = existing_user[0]
                     session['user_id'] = user_id
                     session['email'] = email
                     
