@@ -150,7 +150,7 @@ def update_team():
     # Save the team, just in case
     session['team'] = new_updated_team
 
-    return redirect(url_for('home.load_teams'))
+    return redirect(url_for('teams.choose_moves'))
 
 
 
@@ -338,3 +338,123 @@ def edit_team(team_id):
         db_conn.close()
 
     return redirect(url_for('teams.create_team'))
+
+
+@bp.route("/choose_moves", methods=['GET'])
+def choose_moves():
+    user_team_id = session.get('user_team_id')
+    if not user_team_id:
+        return redirect(url_for('teams.create_team'))
+
+    db_conn = getconn()
+    try:
+        with db_conn.cursor() as cursor:
+            # Get the pokedex_id and name for each Pokémon on the user's team
+            get_team_query = """
+                SELECT PE.pokedex_id, PE.name
+                FROM user_poke_team_members UPT
+                JOIN pokedex_entries PE ON UPT.pokedex_id = PE.pokedex_id
+                WHERE UPT.user_team_id = %s
+                ORDER BY UPT.user_team_member_id ASC
+            """
+            cursor.execute(get_team_query, (user_team_id,))
+            team_pokemon = cursor.fetchall()
+
+            # For each Pokémon, get its available moves (all move info)
+            moves_by_pokemon = []
+            for poke in team_pokemon:
+                pokedex_id = poke['pokedex_id']
+                name = poke['name']
+                
+                get_moves_query = """
+                    SELECT M.move_name, M.move_type, M.category, M.move_power, M.accuracy, M.pp
+                    FROM pokemon_moves PM
+                    JOIN moves M ON PM.move_id = M.move_id
+                    WHERE PM.pokedex_id = %s
+                    ORDER BY M.move_name
+                """
+                cursor.execute(get_moves_query, (pokedex_id,))
+                move_results = cursor.fetchall()  # list of dicts
+
+                moves_by_pokemon.append({
+                    'name': name,
+                    'pokedex_id': pokedex_id,
+                    'moves': move_results  # full move info
+                })
+
+    finally:
+        db_conn.close()
+
+    return render_template('moves.html', moves_by_pokemon=moves_by_pokemon)
+
+
+@bp.route('/save_moves', methods=['POST'])
+def save_moves():
+    user_team_id = session.get('user_team_id')
+    if not user_team_id:
+        return redirect(url_for('teams.create_team'))
+
+    # Connect to DB
+    db_conn = getconn()
+    try:
+        with db_conn.cursor() as cursor:
+            # Get the team members in order with their user_team_member_id and pokedex_id
+            get_team_members = """
+                SELECT user_team_member_id, pokedex_id
+                FROM user_poke_team_members
+                WHERE user_team_id = %s
+                ORDER BY user_team_member_id ASC
+            """
+            cursor.execute(get_team_members, (user_team_id,))
+            team_members = cursor.fetchall()
+
+            for member in team_members:
+                member_id = member['user_team_member_id']
+                pokedex_id = member['pokedex_id']
+
+                # Get moves selected by user for this pokedex_id
+                selected_moves = request.form.getlist(f"moves_{pokedex_id}")
+
+                # Validate: must have exactly 4 moves selected
+                if len(selected_moves) != 4:
+                    # Handle error (e.g., flash message or redirect with error)
+                    return "Please select exactly 4 moves for each Pokémon.", 400
+
+                # For each move name, get move_id and initial current_pp from moves table
+                move_ids = []
+                move_pps = []
+
+                for move_name in selected_moves:
+                    cursor.execute("SELECT move_id, pp FROM moves WHERE move_name = %s", (move_name,))
+                    move_row = cursor.fetchone()
+                    if move_row:
+                        move_ids.append(move_row['move_id'])
+                        move_pps.append(move_row['pp'])
+                    else:
+                        # Move not found, handle error or skip
+                        return f"Move '{move_name}' not found.", 400
+
+                # Update the user_poke_team_members row for this Pokémon with the chosen moves and their PP
+                update_moves_sql = """
+                    UPDATE user_poke_team_members
+                    SET move_1_id = %s, move_1_current_pp = %s,
+                        move_2_id = %s, move_2_current_pp = %s,
+                        move_3_id = %s, move_3_current_pp = %s,
+                        move_4_id = %s, move_4_current_pp = %s
+                    WHERE user_team_id = %s AND user_team_member_id = %s
+                """
+                cursor.execute(update_moves_sql, (
+                    move_ids[0], move_pps[0],
+                    move_ids[1], move_pps[1],
+                    move_ids[2], move_pps[2],
+                    move_ids[3], move_pps[3],
+                    user_team_id, member_id
+                ))
+
+            db_conn.commit()
+
+    finally:
+        db_conn.close()
+
+    # After saving, redirect to a confirmation page or team overview
+    return redirect(url_for('home.load_teams'))
