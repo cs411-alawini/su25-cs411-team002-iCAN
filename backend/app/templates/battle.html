@@ -7,16 +7,26 @@
         body { font-family: sans-serif; background-color: #333; color: white; margin: 0; padding: 0; }
         .battle-container { max-width: 800px; margin: 20px auto; padding: 10px; border: 4px solid #ddd; background-color: #555; }
         .battle-arena { display: flex; justify-content: space-between; align-items: flex-end; height: 250px; padding: 20px; }
-        .pokemon-display img { width: 150px; height: 150px; image-rendering: pixelated; /* For sharp pixel art */ }
+        .pokemon-display img { width: 150px; height: 150px; image-rendering: pixelated; }
         .info-box { border: 3px solid #ddd; border-radius: 8px; padding: 10px; background-color: #fafafa; color: #333; width: 250px; }
         .player-info-box { text-align: right; }
         .hp-bar-container { background-color: #555; border-radius: 5px; padding: 2px; border: 1px solid #333; }
-        .hp-bar { background-color: #ff3b30; /* Red for low HP */ height: 10px; border-radius: 3px; transition: width 0.5s ease-in-out; }
-        .hp-bar.high { background-color: #34c759; } /* Green for high HP */
-        .hp-bar.medium { background-color: #ffcc00; } /* Yellow for medium HP */
+        .hp-bar { background-color: #ff3b30; height: 10px; border-radius: 3px; transition: width 0.5s ease-in-out; }
         .battle-controls { border: 4px solid #ddd; margin-top: 10px; padding: 20px; min-height: 150px; }
-        .action-menu, .move-menu { display: flex; flex-wrap: wrap; }
-        .action-menu button, .move-menu button { flex-basis: 48%; margin: 1%; padding: 15px; font-size: 16px; cursor: pointer; }
+        
+        /* Menu Styling */
+        .action-menu, .move-menu, .team-menu { display: flex; flex-wrap: wrap; }
+        .action-menu button, .move-menu button, .team-menu button {
+            flex-basis: 48%;
+            margin: 1%;
+            padding: 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: 2px solid #333;
+        }
+        .team-menu button { flex-basis: 100%; } /* Team buttons take full width */
+        .team-menu button:disabled { text-decoration: line-through; color: #888; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -28,7 +38,7 @@
      data-opponent-member-id="{{ state.opponent_pokemon.member_id }}">
 
     <div class="battle-arena">
-        <div class="pokemon-display">
+        <div class="pokemon-display opponent-info">
             <div class="info-box">
                 <h3 id="opponent-name">{{ state.opponent_pokemon.pokemon_name }}</h3>
                 <div class="hp-bar-container">
@@ -39,8 +49,8 @@
             <img src="{{ state.opponent_pokemon.image_url }}" alt="{{ state.opponent_pokemon.pokemon_name }}">
         </div>
 
-        <div class="pokemon-display">
-            <img src="{{ state.player_pokemon.image_url }}" alt="{{ state.player_pokemon.pokemon_name }}">
+        <div class="pokemon-display player-info">
+            <img id="player-pokemon-img" src="{{ state.player_pokemon.image_url }}" alt="{{ state.player_pokemon.pokemon_name }}">
             <div class="info-box player-info-box">
                 <h3 id="player-name">{{ state.player_pokemon.pokemon_name }}</h3>
                 <div class="hp-bar-container">
@@ -59,7 +69,7 @@
             <button onclick="showMoveMenu()">Fight</button>
             <button onclick="showTeam()">Pokémon</button>
             <button disabled>Item</button>
-            <button disabled>Switch</button>
+            <button onclick="showTeam()">Switch</button>
         </div>
         <div class="move-menu" id="move-menu" style="display: none;">
             {% for move in state.player_pokemon.moves %}
@@ -71,127 +81,173 @@
                 {% endif %}
             {% endfor %}
         </div>
+        <div class="team-menu" id="team-menu" style="display: none;"></div>
     </div>
 </div>
 
 <script>
-    // --- UI Navigation Functions ---
     function showMoveMenu() {
         document.getElementById('action-menu').style.display = 'none';
         document.getElementById('move-menu').style.display = 'flex';
     }
 
-    // --- API Call Functions ---
-
-    /**
-     * Fetches the user's full team data when they click the "Pokémon" button.
-     */
     async function showTeam() {
+        document.getElementById('action-menu').style.display = 'none';
         const container = document.querySelector('.battle-container');
         const user_team_id = container.dataset.userTeamId;
-
+        const teamMenu = document.getElementById('team-menu');
+        
         const response = await fetch(`/battle/api/team/${user_team_id}`);
         const teamData = await response.json();
+        
+        teamMenu.innerHTML = '';
+        teamData.forEach(pokemon => {
+            const pokeButton = document.createElement('button');
+            pokeButton.innerHTML = `${pokemon.name} (${pokemon.current_hp} / ${pokemon.max_hp} HP)`;
+            
+            if (pokemon.current_hp <= 0) {
+                pokeButton.disabled = true;
+            }
+            
+            pokeButton.onclick = () => performSwitch(pokemon);
+            teamMenu.appendChild(pokeButton);
+        });
 
-        // For now, we just log the data. Later, this can show a team switch screen.
-        console.log("Full Team Data:", teamData);
-        alert("Check the browser's developer console (F12) to see your full team data!");
+        const cancelButton = document.createElement('button');
+        cancelButton.innerText = 'Cancel';
+        cancelButton.onclick = () => {
+             document.getElementById('action-menu').style.display = 'flex';
+             teamMenu.style.display = 'none';
+        };
+        teamMenu.appendChild(cancelButton);
+
+        teamMenu.style.display = 'flex';
     }
 
-async function handleMoveClick(moveSlot) {
-    const dialogueBox = document.getElementById('dialogue-box');
-    const container = document.querySelector('.battle-container');
-    dialogueBox.innerHTML = '<p>Processing turn...</p>';
+    function performSwitch(newPokemon) {
+        const container = document.querySelector('.battle-container');
+        const dialogueBox = document.getElementById('dialogue-box');
 
-    // --- Hide the controls while the turn is processing ---
-    document.getElementById('action-menu').style.display = 'none';
-    document.getElementById('move-menu').style.display = 'none';
+        container.dataset.playerMemberId = newPokemon.user_team_member_id;
 
-    // --- Gather all data needed for the procedure ---
-    const turnData = {
-        attacker_party: 'USER',
-        attacker_team_id: container.dataset.userTeamId,
-        attacker_member_id: container.dataset.playerMemberId,
-        defender_party: 'GYM',
-        defender_team_id: container.dataset.gymId,
-        defender_member_id: container.dataset.opponentMemberId,
-        move_slot: moveSlot,
-        player_team_id: container.dataset.userTeamId,
-        player_member_id: container.dataset.playerMemberId,
-        opponent_team_id: container.dataset.gymId,
-        opponent_member_id: container.dataset.opponentMemberId
-    };
-
-    // --- Call the Player's Turn API ---
-    const response = await fetch('/battle/api/turn', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(turnData),
-    });
-    const result = await response.json();
-
-    // --- Update the UI with the player's turn results ---
-    if (result.success) {
-        dialogueBox.innerHTML = `<p>${result.message}</p>`;
-
-        const opponentHpElement = document.getElementById('opponent-hp');
-        const opponentHpBar = document.getElementById('opponent-hp-bar');
-        const opponentMaxHp = {{ state.opponent_pokemon.max_hp }};
-        opponentHpElement.innerText = result.opponent_hp;
-        opponentHpBar.style.width = (result.opponent_hp / opponentMaxHp * 100) + '%';
+        document.getElementById('player-name').innerText = newPokemon.name;
+        document.getElementById('player-hp').innerText = newPokemon.current_hp;
+        document.getElementById('player-pokemon-img').src = newPokemon.image_url;
         
-        // If the opponent didn't faint, trigger the AI's turn after a delay
-        if (!result.message.includes('fainted')) {
-            setTimeout(triggerAITurn, 2000); // Wait 2 seconds
-        }
-        
-    } else {
-        dialogueBox.innerHTML = `<p>An error occurred: ${result.message}</p>`;
-    }
-}
-
-async function triggerAITurn() {
-    const dialogueBox = document.getElementById('dialogue-box');
-    const container = document.querySelector('.battle-container');
-    dialogueBox.innerHTML = '<p>The opponent is making a move...</p>';
-
-    // Gather the same data as before to send to the AI's brain
-    const turnData = {
-        player_team_id: container.dataset.userTeamId,
-        player_member_id: container.dataset.playerMemberId,
-        opponent_team_id: container.dataset.gymId,
-        opponent_member_id: container.dataset.opponentMemberId
-    };
-
-    // Call the new AI API route
-    const response = await fetch('/battle/api/ai-turn', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(turnData),
-    });
-    const result = await response.json();
-
-    if (result.success) {
-        dialogueBox.innerHTML = `<p>${result.message}</p>`;
-
-        // Update the PLAYER'S HP bar this time
-        const playerHpElement = document.getElementById('player-hp');
         const playerHpBar = document.getElementById('player-hp-bar');
-        const playerMaxHp = {{ state.player_pokemon.max_hp }};
-        playerHpElement.innerText = result.player_hp;
-        playerHpBar.style.width = (result.player_hp / playerMaxHp * 100) + '%';
-    } else {
-        dialogueBox.innerHTML = `<p>An error occurred during AI turn: ${result.message}</p>`;
+        playerHpBar.style.width = (newPokemon.current_hp / newPokemon.max_hp * 100) + '%';
+        
+        document.getElementById('team-menu').style.display = 'none';
+        dialogueBox.innerHTML = `<p>Go, ${newPokemon.name}!</p>`;
+
+        setTimeout(triggerAITurn, 2000);
     }
 
-    // After the AI turn, re-enable the player's controls
-    document.getElementById('action-menu').style.display = 'flex';
-    document.getElementById('move-menu').style.display = 'none';
-    if (!result.message.includes('fainted')) {
-        dialogueBox.innerHTML = `<p>What will {{ state.player_pokemon.pokemon_name }} do?</p>`;
-    }
-}
+    async function handleMoveClick(moveSlot) {
+        const dialogueBox = document.getElementById('dialogue-box');
+        const container = document.querySelector('.battle-container');
+        dialogueBox.innerHTML = '<p>Processing turn...</p>';
 
+        document.getElementById('action-menu').style.display = 'none';
+        document.getElementById('move-menu').style.display = 'none';
+
+        const turnData = {
+            attacker_party: 'USER',
+            attacker_team_id: container.dataset.userTeamId,
+            attacker_member_id: container.dataset.playerMemberId,
+            defender_party: 'GYM',
+            defender_team_id: container.dataset.gymId,
+            defender_member_id: container.dataset.opponentMemberId,
+            move_slot: moveSlot,
+            player_team_id: container.dataset.userTeamId,
+            player_member_id: container.dataset.playerMemberId,
+            opponent_team_id: container.dataset.gymId,
+            opponent_member_id: container.dataset.opponentMemberId
+        };
+
+        const response = await fetch('/battle/api/turn', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(turnData),
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            dialogueBox.innerHTML = `<p>${result.message}</p>`;
+
+            const opponentHpElement = document.getElementById('opponent-hp');
+            const opponentHpBar = document.getElementById('opponent-hp-bar');
+            const opponentMaxHp = {{ state.opponent_pokemon.max_hp }};
+            opponentHpElement.innerText = result.opponent_hp;
+            opponentHpBar.style.width = (result.opponent_hp / opponentMaxHp * 100) + '%';
+            
+            setTimeout(() => {
+                if (result.ai_switch_info) {
+                    if (result.ai_switch_info.game_over) {
+                        dialogueBox.innerHTML = `<p>All of the opponent's Pokémon have fainted. You win!</p>`;
+                    } else {
+                        const newOpponent = result.ai_switch_info;
+                        dialogueBox.innerHTML = `<p>The opponent sent out ${newOpponent.name}!</p>`;
+                        
+                        document.getElementById('opponent-name').innerText = newOpponent.name;
+                        document.querySelector('.opponent-info img').src = newOpponent.image_url;
+                        opponentHpElement.innerText = newOpponent.current_hp;
+                        opponentHpBar.style.width = (newOpponent.current_hp / newOpponent.max_hp * 100) + '%';
+                        
+                        container.dataset.opponentMemberId = newOpponent.gym_team_member_id;
+
+                        setTimeout(() => {
+                            document.getElementById('action-menu').style.display = 'flex';
+                            dialogueBox.innerHTML = `<p>What will {{ state.player_pokemon.pokemon_name }} do?</p>`;
+                        }, 2000);
+                    }
+                } else {
+                    triggerAITurn();
+                }
+            }, 2000);
+            
+        } else {
+            dialogueBox.innerHTML = `<p>An error occurred: ${result.message}</p>`;
+        }
+    }
+
+    async function triggerAITurn() {
+        const dialogueBox = document.getElementById('dialogue-box');
+        const container = document.querySelector('.battle-container');
+        dialogueBox.innerHTML = '<p>The opponent is making a move...</p>';
+
+        const turnData = {
+            player_team_id: container.dataset.userTeamId,
+            player_member_id: container.dataset.playerMemberId,
+            opponent_team_id: container.dataset.gymId,
+            opponent_member_id: container.dataset.opponentMemberId
+        };
+
+        const response = await fetch('/battle/api/ai-turn', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(turnData),
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            dialogueBox.innerHTML = `<p>${result.message}</p>`;
+
+            const playerHpElement = document.getElementById('player-hp');
+            const playerHpBar = document.getElementById('player-hp-bar');
+            const playerMaxHp = {{ state.player_pokemon.max_hp }};
+            playerHpElement.innerText = result.player_hp;
+            playerHpBar.style.width = (result.player_hp / playerMaxHp * 100) + '%';
+        } else {
+            dialogueBox.innerHTML = `<p>An error occurred during AI turn: ${result.message}</p>`;
+        }
+
+        document.getElementById('action-menu').style.display = 'flex';
+        document.getElementById('move-menu').style.display = 'none';
+        if (!result.message.includes('fainted')) {
+            dialogueBox.innerHTML = `<p>What will ${document.getElementById('player-name').innerText} do?</p>`;
+        }
+    }
 </script>
 
 </body>
