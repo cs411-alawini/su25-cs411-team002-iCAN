@@ -1,47 +1,40 @@
-from flask import jsonify, render_template, Blueprint, request
+from flask import jsonify, render_template, Blueprint, request, session, redirect, url_for
 from app.db import getconn
 
-# Routes will go here e.g. @bp.route('/battle')
 bp = Blueprint('battle', __name__, url_prefix='/battle')
 
-# Route for starting a battle 
-# Create the endpoint at url_prefix='/battle/start/<gym_id>'
 @bp.route('/start/<int:gym_id>')
 def start_battle(gym_id):
     conn = None
     try:
+        if 'user_id' not in session:
+            return redirect(url_for('auth.login'))
+
+        user_id = session['user_id']
+
         conn = getconn()
         cursor = conn.cursor()
 
-        # TODO: Preset user_id for debugging until user auth is connected
-        user_id = 1
-
         query = "SELECT user_team_id FROM user_teams WHERE user_id = %s AND is_active = TRUE;"
-        # Find the user's active team ID
-        cursor.execute(query, (user_id))
+        cursor.execute(query, (user_id,))
         active_team = cursor.fetchone()
 
         if not active_team:
-            # Handle case where the user has no active team
             return "You do not have an active team selected.", 400
 
         user_team_id = active_team['user_team_id']
 
-        # Call the stored procedure 
         cursor.callproc('get_battle_state', (user_team_id, gym_id))
         results = cursor.fetchall()
         conn.commit()
 
-        # Process the results to fit the template's expected structure
         battle_state = {}
         for row in results:
-            print(row)
             if row['party_type'] == 'USER':
                 battle_state['player_pokemon'] = row
             else:
                 battle_state['opponent_pokemon'] = row
         
-        # Structure the moves into a list for the template
         for party in battle_state.values():
             party['moves'] = [
                 {'move_name': party['move_1_name'], 'current_pp': party['move_1_current_pp'], 'max_pp': party['move_1_max_pp']},
@@ -59,7 +52,6 @@ def start_battle(gym_id):
         if conn:
             conn.close()
 
-# Route for getting a user's team during battle
 @bp.route('/api/team/<int:user_team_id>', methods=['GET'])
 def get_user_team(user_team_id):
     conn = None
@@ -67,28 +59,17 @@ def get_user_team(user_team_id):
         conn = getconn()
         cursor = conn.cursor()
 
-        # Query to get all members of a user team 
         query = """
             SELECT
-                utm.user_team_member_id,
-                p.name,
-                utm.current_hp,
-                p.hp AS max_hp,
-                p.image_url
-            FROM
-                user_poke_team_members utm
-            JOIN
-                pokedex_entries p
-            ON
-                utm.pokedex_id = p.pokedex_id
-            WHERE
-                utm.user_team_id = %s
-            ORDER BY
-                utm.user_team_member_id;
+                utm.user_team_member_id, p.name, utm.current_hp,
+                p.hp AS max_hp, p.image_url
+            FROM user_poke_team_members utm
+            JOIN pokedex_entries p ON utm.pokedex_id = p.pokedex_id
+            WHERE utm.user_team_id = %s
+            ORDER BY utm.user_team_member_id;
         """
         cursor.execute(query, (user_team_id,))
         team_data = cursor.fetchall()
-
         return jsonify(team_data)
 
     except Exception as e:
@@ -103,9 +84,7 @@ def process_turn():
     conn = None
     try:
         data = request.get_json()
-        print("Received turn data:", data) # For debugging
-
-        # --- Data from the frontend ---
+        
         attacker_party = data.get('attacker_party')
         attacker_team_id = data.get('attacker_team_id')
         attacker_member_id = data.get('attacker_member_id')
@@ -117,28 +96,18 @@ def process_turn():
         conn = getconn()
         cursor = conn.cursor()
 
-        # The arguments must be in the exact order the procedure expects
         args = [
-            attacker_party,
-            attacker_team_id,
-            attacker_member_id,
-            defender_party,
-            defender_team_id,
-            defender_member_id,
-            move_slot,
-            '' # Placeholder for the OUT parameter
+            attacker_party, attacker_team_id, attacker_member_id,
+            defender_party, defender_team_id, defender_member_id,
+            move_slot, ''
         ]
         
-        # Execute the stored procedure
         cursor.callproc('process_battle_turn', args)
         
-        # Fetch the value of the OUT parameter
-        cursor.execute("SELECT @_process_battle_turn_7;") # The _7 corresponds to the 8th argument (index 7)
+        cursor.execute("SELECT @_process_battle_turn_7;")
         result = cursor.fetchone()
         outcome_message = result.get('@_process_battle_turn_7')
 
-        # After the turn, we need to get the new HP values to send back
-        # This is a simplified query; a new SP could be more efficient
         cursor.execute("SELECT current_hp FROM user_poke_team_members WHERE user_team_id = %s AND user_team_member_id = %s;", (data.get('player_team_id'), data.get('player_member_id')))
         player_hp = cursor.fetchone()['current_hp']
 
@@ -148,21 +117,19 @@ def process_turn():
         conn.commit()
 
         return jsonify({
-            "success": True,
-            "message": outcome_message,
-            "player_hp": player_hp,
-            "opponent_hp": opponent_hp
+            "success": True, "message": outcome_message,
+            "player_hp": player_hp, "opponent_hp": opponent_hp
         })
 
     except Exception as e:
         print(f"Error processing turn: {e}")
-        if conn:
-            conn.rollback()
+        if conn: conn.rollback()
         return jsonify({"success": False, "message": str(e)}), 500
     finally:
-        if conn:
-            conn.close()
-            
+        if conn: conn.close()
+
+# This is the updated process_ai_turn function with debug messages
+
 @bp.route('/api/ai-turn', methods=['POST'])
 def process_ai_turn():
     conn = None
@@ -176,67 +143,84 @@ def process_ai_turn():
         conn = getconn()
         cursor = conn.cursor()
 
-        # Step 1: Get data for the AI to make a decision
-        # We need the AI's moves and the player's Pokémon's types.
-        # This query is a bit complex; for a class project, a new SP for this would be impressive.
-        ai_decision_query = """
-            SELECT
-                p_user.pType_1, p_user.pType_2,
-                gtm.move_1_id, gtm.move_2_id, gtm.move_3_id, gtm.move_4_id,
-                gtm.move_1_current_pp, gtm.move_2_current_pp, gtm.move_3_current_pp, gtm.move_4_current_pp
-            FROM gym_leader_team_members gtm
-            CROSS JOIN user_poke_team_members utm
-            JOIN pokedex_entries p_user ON utm.pokedex_id = p_user.pokedex_id
-            WHERE gtm.gym_id = %s AND gtm.gym_team_member_id = %s
-            AND utm.user_team_id = %s AND utm.user_team_member_id = %s;
-        """
-        cursor.execute(ai_decision_query, (gym_id, gym_member_id, user_team_id, user_member_id))
-        decision_data = cursor.fetchone()
+        # --- ADD DEBUG PRINTS BEFORE EACH QUERY ---
 
-# This is inside your process_ai_turn function in battle.py
+        print("--- AI DEBUG: RUNNING QUERY A (GET AI DATA) ---")
+        cursor.execute("""
+            SELECT name, move_1_id, move_2_id, move_3_id, move_4_id,
+                   move_1_current_pp, move_2_current_pp, move_3_current_pp, move_4_current_pp
+            FROM gym_leader_team_members
+            JOIN pokedex_entries ON gym_leader_team_members.pokedex_id = pokedex_entries.pokedex_id
+            WHERE gym_id = %s AND gym_team_member_id = %s;
+        """, (gym_id, gym_member_id))
+        ai_data = cursor.fetchone()
 
-        # Step 2: AI "Brain" - Score each available move
+        print("--- AI DEBUG: RUNNING QUERY B (GET PLAYER DATA) ---")
+        cursor.execute("""
+            SELECT pType_1, pType_2
+            FROM user_poke_team_members
+            JOIN pokedex_entries ON user_poke_team_members.pokedex_id = pokedex_entries.pokedex_id
+            WHERE user_team_id = %s AND user_team_member_id = %s;
+        """, (user_team_id, user_member_id))
+        player_data = cursor.fetchone()
+        
+        if not ai_data or not player_data:
+            return jsonify({"success": False, "message": "AI failed to gather battle data."}), 500
+        
         best_move = {'slot': 0, 'score': -1}
-        move_ids = [decision_data['move_1_id'], decision_data['move_2_id'], decision_data['move_3_id'], decision_data['move_4_id']]
-        move_pps = [decision_data['move_1_current_pp'], decision_data['move_2_current_pp'], decision_data['move_3_current_pp'], decision_data['move_4_current_pp']]
+        move_ids = [ai_data['move_1_id'], ai_data['move_2_id'], ai_data['move_3_id'], ai_data['move_4_id']]
+        move_pps = [ai_data['move_1_current_pp'], ai_data['move_2_current_pp'], ai_data['move_3_current_pp'], ai_data['move_4_current_pp']]
 
         for i, move_id in enumerate(move_ids):
             if move_id is not None and move_pps[i] > 0:
-                # Get move power and type
+                print(f"--- AI DEBUG: GETTING MOVE INFO FOR MOVE_ID {move_id} ---")
                 cursor.execute("SELECT move_power, move_type FROM moves WHERE move_id = %s;", (move_id,))
                 move_info = cursor.fetchone()
                 
-                # Get type effectiveness multiplier vs player's type 1
-                cursor.execute("SELECT COALESCE(multiplier, 1.0) as mult FROM type_matchups WHERE attacking_type = %s AND defending_type = %s;", (move_info['move_type'], decision_data['pType_1']))
-                multiplier = cursor.fetchone()['mult']
-                
-                # --- ADD THIS BLOCK TO CHECK THE SECOND TYPE ---
-                if decision_data['pType_2'] is not None:
-                    cursor.execute("SELECT COALESCE(multiplier, 1.0) as mult FROM type_matchups WHERE attacking_type = %s AND defending_type = %s;", (move_info['move_type'], decision_data['pType_2']))
-                    multiplier *= cursor.fetchone()['mult']
-                # --- END OF ADDED BLOCK ---
+                print(f"--- AI DEBUG: GETTING MULTIPLIER 1 FOR TYPE {move_info['move_type']} vs {player_data['pType_1']} ---")
+                cursor.execute("SELECT multiplier FROM type_matchups WHERE attacking_type = %s AND defending_type = %s;", (move_info['move_type'], player_data['pType_1']))
+                result1 = cursor.fetchone()
+                multiplier = result1['multiplier'] if result1 else 1.0
+
+                if player_data['pType_2'] is not None:
+                    print(f"--- AI DEBUG: GETTING MULTIPLIER 2 FOR TYPE {move_info['move_type']} vs {player_data['pType_2']} ---")
+                    cursor.execute("SELECT multiplier FROM type_matchups WHERE attacking_type = %s AND defending_type = %s;", (move_info['move_type'], player_data['pType_2']))
+                    result2 = cursor.fetchone()
+                    if result2:
+                        multiplier *= result2['multiplier']
                 
                 score = move_info['move_power'] * multiplier
                 if score > best_move['score']:
                     best_move['score'] = score
                     best_move['slot'] = i + 1
+        
+        # ... (rest of the function is the same)
+        
+        if best_move['slot'] == 0:
+            for i, pp in enumerate(move_pps):
+                if move_ids[i] is not None and pp > 0:
+                    best_move['slot'] = i + 1
+                    break
 
-        # Step 3: Call the main procedure with the AI's chosen move
+        print("--- AI DEBUG: CALLING STORED PROCEDURE ---")
         args = ['GYM', gym_id, gym_member_id, 'USER', user_team_id, user_member_id, best_move['slot'], '']
         cursor.callproc('process_battle_turn', args)
+
+        print("--- AI DEBUG: FETCHING OUT PARAMETER ---")
         cursor.execute("SELECT @_process_battle_turn_7;")
         result = cursor.fetchone()
         outcome_message = result.get('@_process_battle_turn_7')
 
-        # Get updated HP values to send back
+        print("--- AI DEBUG: FETCHING PLAYER HP ---")
         cursor.execute("SELECT current_hp FROM user_poke_team_members WHERE user_team_id = %s AND user_team_member_id = %s;", (user_team_id, user_member_id))
         player_hp = cursor.fetchone()['current_hp']
+
+        print("--- AI DEBUG: FETCHING OPPONENT HP ---")
         cursor.execute("SELECT current_hp FROM gym_leader_team_members WHERE gym_id = %s AND gym_team_member_id = %s;", (gym_id, gym_member_id))
         opponent_hp = cursor.fetchone()['current_hp']
         
         conn.commit()
-
-        return jsonify({"success": True, "message": outcome_message, "player_hp": player_hp, "opponent_hp": opponent_hp})
+        return jsonify({ "success": True, "message": outcome_message, "player_hp": player_hp, "opponent_hp": opponent_hp })
     
     except Exception as e:
         print(f"Error in AI turn: {e}")
