@@ -42,7 +42,7 @@ def create_team():
     if request.method == 'POST':
         # Get the search term (user input) from the form
         user_pokemon_input = request.form.get('pokemon_search', '').strip()
-
+        print("We are seraching for pokemon name")
         results = []
         if user_pokemon_input:
             db_conn = getconn()

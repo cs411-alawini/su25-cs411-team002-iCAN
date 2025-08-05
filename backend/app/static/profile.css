@@ -113,6 +113,34 @@ dd {
     color: #555;
 }
 
+.profile_buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; 
+}
+
+.profile_actions {
+    text-align: left;
+}
+
+/* Delete button styling */
+.gym_button {
+    padding: 10px 22px;
+    background-color: #ffe6cc;
+    border: 2px solid #ffa366;
+    border-radius: 50px;
+    color: #663300;
+    padding: 10px 22px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.gym_button:hover {
+    background-color: #ff8535;
+}
+
+
 /* Delete account button container */
 .delete_account {
     text-align: right;
