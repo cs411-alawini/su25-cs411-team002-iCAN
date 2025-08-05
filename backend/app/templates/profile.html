@@ -4,7 +4,7 @@
 
 {% block content %}
     <div class="top_navbar">
-        <button type="button" onclick="location.href='{{ url_for('main.home') }}'">← Back to Homepage</button>
+        <button type="button" onclick="location.href='{{ url_for('home.load_homepage') }}'">← Back to Homepage</button>
     </div>
 
     <div class="profile_container">
@@ -38,7 +38,7 @@
             </div>
 
             <div class="profile_actions">
-                <button class="gym_button" type="button" onclick="location.href='{{ url_for('battle.select_gym_leader') }}'">
+                <button class="gym_button" type="button" onclick="location.href='{{ url_for('gym.select_gym_leader') }}'">
                     Challenge the Gyms
                 </button>
             </div>
