@@ -14,3 +14,19 @@ You should make sure you keep your project root files up-to-date. Information fo
 
 ## Code Contribution
 Individual code contribution will be used to evaluate individual contribution to the project.
+
+## Contributing to the repo
+Always start by syncing with the main branch:
+git checkout main
+
+Pull latest changes from Github:
+git pull origin main
+
+Now, your local main branch is up-to-date with the one on github. From here, start a new branch or update an existing one.
+
+To start a new feature branch: 
+git checkout -b <branch-name>
+
+To update an existing feature branch:
+git checkout <your-feature-branch>
+git merge main
