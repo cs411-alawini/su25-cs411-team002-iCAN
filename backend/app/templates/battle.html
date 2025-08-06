@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
+    <link rel="icon" href="{{ url_for('static', filename='pokeball.png') }}" type="image/png">
     <title>Pokemon Battle</title>
     <style>
         body { font-family: sans-serif; background-color: #333; color: white; margin: 0; padding: 0; }
@@ -13,8 +14,6 @@
         .hp-bar-container { background-color: #555; border-radius: 5px; padding: 2px; border: 1px solid #333; }
         .hp-bar { background-color: #ff3b30; height: 10px; border-radius: 3px; transition: width 0.5s ease-in-out; }
         .battle-controls { border: 4px solid #ddd; margin-top: 10px; padding: 20px; min-height: 150px; }
-        
-        /* Menu Styling */
         .action-menu, .move-menu, .team-menu { display: flex; flex-wrap: wrap; }
         .action-menu button, .move-menu button, .team-menu button {
             flex-basis: 48%;
@@ -25,17 +24,40 @@
             border-radius: 5px;
             border: 2px solid #333;
         }
-        .team-menu button { flex-basis: 100%; } /* Team buttons take full width */
+        .team-menu button { flex-basis: 100%; } 
         .team-menu button:disabled { text-decoration: line-through; color: #888; cursor: not-allowed; }
+        .top_navbar {
+            display: flex;
+            justify-content: flex-end;
+            padding: 5px;
+        }
+        .top_navbar button {
+            padding: 8px 16px;
+            background-color: #6c63ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .top_navbar button:hover {
+            background-color: #574fd6;
+        }
     </style>
 </head>
 <body>
+<div class="top_navbar">
+    <button type="button" onclick="location.href='/home'">Back to Home</button>
+</div>
 
 <div class="battle-container"
      data-user-team-id="{{ state.player_pokemon.team_id }}"
      data-gym-id="{{ state.opponent_pokemon.team_id }}"
      data-player-member-id="{{ state.player_pokemon.member_id }}"
-     data-opponent-member-id="{{ state.opponent_pokemon.member_id }}">
+     data-opponent-member-id="{{ state.opponent_pokemon.member_id }}"
+     data-opponent-max-hp="{{ opponent_max_hp }}"
+     data-player-current-hp="{{ state.player_pokemon.current_hp }}"
+     data-player-max-hp="{{ state.player_pokemon.max_hp }}"
+     data-opponent-current-hp="{{ state.opponent_pokemon.current_hp }}">
 
     <div class="battle-arena">
         <div class="pokemon-display opponent-info">
@@ -44,7 +66,10 @@
                 <div class="hp-bar-container">
                     <div id="opponent-hp-bar" class="hp-bar" style="width: {{ (state.opponent_pokemon.current_hp / state.opponent_pokemon.max_hp) * 100 }}%;"></div>
                 </div>
-                <p><span id="opponent-hp">{{ state.opponent_pokemon.current_hp }}</span> / {{ state.opponent_pokemon.max_hp }}</p>
+                <p>
+                    <span id="opponent-hp">{{ state.opponent_pokemon.current_hp }}</span> / 
+                    <span id="opponent-max-hp">{{ state.opponent_pokemon.max_hp }}</span>
+                </p>
             </div>
             <img src="{{ state.opponent_pokemon.image_url }}" alt="{{ state.opponent_pokemon.pokemon_name }}">
         </div>
@@ -56,7 +81,10 @@
                 <div class="hp-bar-container">
                     <div id="player-hp-bar" class="hp-bar" style="width: {{ (state.player_pokemon.current_hp / state.player_pokemon.max_hp) * 100 }}%;"></div>
                 </div>
-                <p><span id="player-hp">{{ state.player_pokemon.current_hp }}</span> / {{ state.player_pokemon.max_hp }}</p>
+                <p>
+                    <span id="player-hp">{{ state.player_pokemon.current_hp }}</span> / 
+                    <span id="player-max-hp">{{ state.player_pokemon.max_hp }}</span>
+                </p>
             </div>
         </div>
     </div>
@@ -66,7 +94,7 @@
             <p>What will {{ state.player_pokemon.pokemon_name }} do?</p>
         </div>
         <div class="action-menu" id="action-menu">
-            <button onclick="showMoveMenu()">Fight</button>
+            <button id="fight-button" onclick="showMoveMenu()">Fight</button>
             <button onclick="showTeam()">Pokémon</button>
             <button disabled>Item</button>
             <button onclick="showTeam()">Switch</button>
@@ -87,6 +115,11 @@
 
 <script>
     function showMoveMenu() {
+        const fightButton = document.getElementById('fight-button');
+        if (fightButton.disabled) {
+            alert("Your Pokemon has fainted! You must switch.");
+            return;
+        }
         document.getElementById('action-menu').style.display = 'none';
         document.getElementById('move-menu').style.display = 'flex';
     }
@@ -124,30 +157,75 @@
         teamMenu.style.display = 'flex';
     }
 
-    function performSwitch(newPokemon) {
+    async function performSwitch(newPokemon) {
         const container = document.querySelector('.battle-container');
         const dialogueBox = document.getElementById('dialogue-box');
 
-        container.dataset.playerMemberId = newPokemon.user_team_member_id;
+        // Clamp current HP to max HP to avoid UI errors
+        const currentHpClamped = Math.min(newPokemon.current_hp, newPokemon.max_hp);
 
+        // Update dataset
+        container.dataset.playerMemberId = newPokemon.user_team_member_id;
+        container.dataset.playerCurrentHp = currentHpClamped;
+        container.dataset.playerMaxHp = newPokemon.max_hp;
+
+        // Update fight button display status
+        updateFightButton();
+
+        // Update pokemon name, image, HP
         document.getElementById('player-name').innerText = newPokemon.name;
-        document.getElementById('player-hp').innerText = newPokemon.current_hp;
+        document.getElementById('player-hp').innerText = currentHpClamped;
+        document.getElementById('player-max-hp').innerText = newPokemon.max_hp; 
         document.getElementById('player-pokemon-img').src = newPokemon.image_url;
-        
-        const playerHpBar = document.getElementById('player-hp-bar');
-        playerHpBar.style.width = (newPokemon.current_hp / newPokemon.max_hp * 100) + '%';
-        
+
+        // Update pokemon HP bar
+        const hpRatio = currentHpClamped / newPokemon.max_hp;
+        const clampedHpRatio = Math.min(Math.max(hpRatio, 0), 1);
+        document.getElementById('player-hp-bar').style.width = (clampedHpRatio * 100) + '%';
+
+        // Get and update moves from DB
+        try {
+            const res = await fetch(`/battle/api/moves/${newPokemon.user_team_member_id}`);
+            if (!res.ok) throw new Error("Move fetch failed");
+
+            const moves = await res.json();
+            const moveMenu = document.getElementById('move-menu');
+            moveMenu.innerHTML = "";  
+
+            moves.forEach((move, index) => {
+                if (move.move_name) {
+                    const moveButton = document.createElement('button');
+                    moveButton.innerHTML = `${move.move_name} (<span id="move-pp-${index + 1}">${move.current_pp}</span>/${move.max_pp})`;
+                    moveButton.onclick = () => handleMoveClick(index + 1);
+                    moveMenu.appendChild(moveButton);
+                }
+            });
+        } catch (err) {
+            console.error("Error fetching moves:", err);
+        }
+
+        // Hide moves/pokemon/etc menu with dialogue
         document.getElementById('team-menu').style.display = 'none';
         dialogueBox.innerHTML = `<p>Go, ${newPokemon.name}!</p>`;
 
         setTimeout(triggerAITurn, 2000);
     }
 
+
+
+
     async function handleMoveClick(moveSlot) {
         const dialogueBox = document.getElementById('dialogue-box');
         const container = document.querySelector('.battle-container');
-        dialogueBox.innerHTML = '<p>Processing turn...</p>';
 
+        // Disable "fight" option if pokemon has fainted
+        const playerCurrentHp = parseInt(container.dataset.playerCurrentHp, 10) || 0;
+        if (playerCurrentHp <= 0) {
+            alert("Your Pokemon has fainted! You must switch before making a move.");
+            return;
+        }
+
+        dialogueBox.innerHTML = '<p>Processing turn...</p>';
         document.getElementById('action-menu').style.display = 'none';
         document.getElementById('move-menu').style.display = 'none';
 
@@ -165,56 +243,111 @@
             opponent_member_id: container.dataset.opponentMemberId
         };
 
-        const response = await fetch('/battle/api/turn', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(turnData),
-        });
-        const result = await response.json();
+        try {
+            const response = await fetch('/battle/api/turn', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(turnData),
+            });
+            const result = await response.json();
 
-        if (result.success) {
-            dialogueBox.innerHTML = `<p>${result.message}</p>`;
+            if (result.success) {
+                dialogueBox.innerHTML = `<p>${result.message}</p>`;
 
-            const opponentHpElement = document.getElementById('opponent-hp');
-            const opponentHpBar = document.getElementById('opponent-hp-bar');
-            const opponentMaxHp = {{ state.opponent_pokemon.max_hp }};
-            opponentHpElement.innerText = result.opponent_hp;
-            opponentHpBar.style.width = (result.opponent_hp / opponentMaxHp * 100) + '%';
-            
-            setTimeout(() => {
+                // Update move PP UI
+                if (result.player_move_pps) {
+                    for (let i = 1; i <= 4; i++) {
+                        const ppSpan = document.getElementById(`move-pp-${i}`);
+                        if (ppSpan && result.player_move_pps[`move_${i}_current_pp`] !== undefined) {
+                            ppSpan.textContent = result.player_move_pps[`move_${i}_current_pp`];
+                        }
+                    }
+                }
+
+                // Update opponent HP
+                const opponentHpElement = document.getElementById('opponent-hp');
+                const opponentMaxHpElement = document.getElementById('opponent-max-hp');
+                const opponentHpBar = document.getElementById('opponent-hp-bar');
+
+                let opponentHp = result.opponent_hp;
+                if (opponentHp < 0) opponentHp = 0;
+
+                opponentHpElement.innerText = opponentHp;
+                container.dataset.opponentCurrentHp = opponentHp;
+
                 if (result.ai_switch_info) {
-                    if (result.ai_switch_info.game_over) {
-                        dialogueBox.innerHTML = `<p>All of the opponent's Pokémon have fainted. You win!</p>`;
-                    } else {
+                    opponentHpElement.innerText = 0;
+                    opponentHpBar.style.width = '0%';
+                    container.dataset.opponentCurrentHp = 0;
+
+                    dialogueBox.innerHTML = `<p>The opponent's ${document.getElementById("opponent-name").innerText} fainted!</p>`;
+
+                    setTimeout(() => {
                         const newOpponent = result.ai_switch_info;
+
                         dialogueBox.innerHTML = `<p>The opponent sent out ${newOpponent.name}!</p>`;
-                        
+
                         document.getElementById('opponent-name').innerText = newOpponent.name;
                         document.querySelector('.opponent-info img').src = newOpponent.image_url;
+
                         opponentHpElement.innerText = newOpponent.current_hp;
-                        opponentHpBar.style.width = (newOpponent.current_hp / newOpponent.max_hp * 100) + '%';
-                        
+                        opponentMaxHpElement.innerText = newOpponent.max_hp;
+
+                        const newHpPercent = Math.min(Math.max((newOpponent.current_hp / newOpponent.max_hp) * 100, 0), 100);
+                        opponentHpBar.style.width = newHpPercent + '%';
+
                         container.dataset.opponentMemberId = newOpponent.gym_team_member_id;
+                        container.dataset.opponentMaxHp = newOpponent.max_hp;
+                        container.dataset.opponentCurrentHp = newOpponent.current_hp;
 
                         setTimeout(() => {
                             document.getElementById('action-menu').style.display = 'flex';
-                            dialogueBox.innerHTML = `<p>What will {{ state.player_pokemon.pokemon_name }} do?</p>`;
+                            dialogueBox.innerHTML = `<p>What will ${document.getElementById("player-name").innerText} do?</p>`;
                         }, 2000);
-                    }
+                    }, 2000);
                 } else {
-                    triggerAITurn();
+                    let hpPercent = Math.min(Math.max((opponentHp / (parseInt(container.dataset.opponentMaxHp) || 1)) * 100, 0), 100);
+                    opponentHpBar.style.width = hpPercent + '%';
+
+                    setTimeout(() => {
+                        triggerAITurn();
+                    }, 2000);
                 }
-            }, 2000);
-            
-        } else {
-            dialogueBox.innerHTML = `<p>An error occurred: ${result.message}</p>`;
+
+                // Update player HP
+                const playerHpElement = document.getElementById('player-hp');
+                const playerMaxHpElement = document.getElementById('player-max-hp');
+                const playerHpBar = document.getElementById('player-hp-bar');
+
+                let playerHp = result.player_hp;
+                let playerMaxHp = parseInt(container.dataset.playerMaxHp, 10) || 1;
+
+                playerHp = Math.min(playerHp, playerMaxHp);
+                if (playerHp < 0) playerHp = 0;
+
+                playerHpElement.innerText = playerHp;
+                playerMaxHpElement.innerText = playerMaxHp;
+                container.dataset.playerCurrentHp = playerHp;
+                updateFightButton();
+
+                let playerHpPercent = Math.min(Math.max((playerHp / playerMaxHp) * 100, 0), 100);
+                playerHpBar.style.width = playerHpPercent + '%';
+
+            } else {
+                dialogueBox.innerHTML = `<p>An error occurred: ${result.message}</p>`;
+            }
+        } catch (error) {
+            console.error('Error in handleMoveClick:', error);
+            dialogueBox.innerHTML = `<p>An unexpected error occurred. Please try again.</p>`;
         }
     }
+
 
     async function triggerAITurn() {
         const dialogueBox = document.getElementById('dialogue-box');
         const container = document.querySelector('.battle-container');
-        dialogueBox.innerHTML = '<p>The opponent is making a move...</p>';
+
+        dialogueBox.innerHTML = '<p>Opponent is making a move...</p>';
 
         const turnData = {
             player_team_id: container.dataset.userTeamId,
@@ -228,26 +361,58 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(turnData),
         });
+
         const result = await response.json();
 
         if (result.success) {
-            dialogueBox.innerHTML = `<p>${result.message}</p>`;
+            dialogueBox.innerHTML = `
+                <p>Opponent is making a move:</p>
+                <p><strong>${result.message}</strong></p>
+            `;
 
             const playerHpElement = document.getElementById('player-hp');
             const playerHpBar = document.getElementById('player-hp-bar');
-            const playerMaxHp = {{ state.player_pokemon.max_hp }};
+            const playerMaxHp = parseInt(container.dataset.playerMaxHp, 10) || 1;
+
             playerHpElement.innerText = result.player_hp;
-            playerHpBar.style.width = (result.player_hp / playerMaxHp * 100) + '%';
+
+            const hpRatio = result.player_hp / playerMaxHp;
+            const hpPercent = Math.min(Math.max(hpRatio * 100, 0), 100);
+            playerHpBar.style.width = hpPercent + '%';
+
+            container.dataset.playerCurrentHp = result.player_hp;
+            updateFightButton();
+
+            setTimeout(() => {
+                dialogueBox.innerHTML = `<p>What will ${document.getElementById('player-name').innerText} do?</p>`;
+                document.getElementById('action-menu').style.display = 'flex';
+                document.getElementById('move-menu').style.display = 'none';
+            }, 2000);
         } else {
             dialogueBox.innerHTML = `<p>An error occurred during AI turn: ${result.message}</p>`;
         }
+    }
 
-        document.getElementById('action-menu').style.display = 'flex';
-        document.getElementById('move-menu').style.display = 'none';
-        if (!result.message.includes('fainted')) {
-            dialogueBox.innerHTML = `<p>What will ${document.getElementById('player-name').innerText} do?</p>`;
+    function updateFightButton() {
+        const container = document.querySelector('.battle-container');
+        const fightButton = document.getElementById('fight-button');
+        const playerCurrentHp = parseInt(container.dataset.playerCurrentHp, 10) || 0;
+
+        console.log("updateFightButton called, playerCurrentHp:", playerCurrentHp);
+
+        if (playerCurrentHp <= 0) {
+            fightButton.disabled = true;
+            fightButton.title = "Your Pokemon has fainted! You must switch.";
+        } else {
+            fightButton.disabled = false;
+            fightButton.title = "";
         }
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateFightButton();
+    });
+
 </script>
 
 </body>

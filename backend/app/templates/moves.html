@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block title %}Choose Moves{% endblock %}
+
+{% block content %}
+<style>
+  :root {
+    --primary: #6a5acd;
+    --secondary: #f08080;
+    --accent: #fdfd96;
+    --bg: #f4f4f9;
+    --text: #333;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+  }
+
+  .move-card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  .move-card {
+    width: 200px;
+    height: 130px;
+    background-color: var(--primary);
+    color: white;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.3s, background-color 0.3s;
+    perspective: 1000px;
+  }
+
+  .move-card:hover {
+    transform: scale(1.05);
+    background-color: var(--secondary);
+  }
+
+  .move-card .front,
+  .move-card .back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    border-radius: 10px;
+    backface-visibility: hidden;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .move-card .front {
+    background-color: var(--primary);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+  }
+
+  .move-card .back {
+    background-color: white;
+    color: var(--text);
+    transform: rotateY(180deg);
+    font-size: 0.85rem;
+    text-align: left;
+    overflow-y: auto;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .move-card.flipped .front {
+    transform: rotateY(180deg);
+  }
+
+  .move-card.flipped .back {
+    transform: rotateY(0deg);
+  }
+
+  .navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin: 2rem 0;
+  }
+
+  .navigation-buttons button {
+    background-color: var(--accent);
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .navigation-buttons button:hover {
+    background-color: #ffe066;
+  }
+
+  .hidden { display: none; }
+</style>
+
+<h1 class="text-center">Choose Moves for Your Pokémon</h1>
+<form action="{{ url_for('teams.save_moves') }}" method="POST">
+  {% for poke in moves_by_pokemon %}
+    <div class="pokemon-panel {% if not loop.first %}hidden{% endif %}" id="poke-{{ loop.index }}">
+      <h2 class="text-center">{{ poke.name }}</h2>
+      <input type="hidden" name="pokedex_ids" value="{{ poke.pokedex_id }}">
+
+      <div class="move-card-container">
+        {% for move in poke.moves %}
+          <div class="move-card" onclick="flipCard(this)">
+            <div class="front">
+              <input type="checkbox" name="moves_{{ poke.pokedex_id }}" value="{{ move.move_name }}"> <br>
+              <strong>{{ move.move_name }}</strong>
+            </div>
+            <div class="back">
+              <strong>{{ move.move_name }}</strong><br>
+              Type: {{ move.move_type }}<br>
+              Category: {{ move.category }}<br>
+              Power: {{ move.move_power }}<br>
+              Accuracy: {{ move.accuracy }}<br>
+              PP: {{ move.pp }}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="navigation-buttons">
+        <button type="button" onclick="showPanel({{ loop.index }}, -1)" {% if loop.first %}class="hidden"{% endif %}>&#8592; Previous Pokémon</button>
+        <button type="button" onclick="showPanel({{ loop.index }}, 1)" {% if loop.last %}class="hidden"{% endif %}>Next Pokémon &#8594;</button>
+        {% if loop.last %}<button type="submit">Save Moves</button>{% endif %}
+      </div>
+    </div>
+  {% endfor %}
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Group checkboxes by Pokémon group name (e.g., moves_123)
+    const groupedCheckboxes = {};
+    const allCheckboxes = document.querySelectorAll('input[type="checkbox"][name^="moves_"]');
+    allCheckboxes.forEach(cb => {
+      const groupName = cb.name;
+      if (!groupedCheckboxes[groupName]) groupedCheckboxes[groupName] = [];
+      groupedCheckboxes[groupName].push(cb);
+    });
+
+    function updateCheckboxes(groupName) {
+      const group = groupedCheckboxes[groupName];
+      const checkedCount = group.filter(c => c.checked).length;
+      group.forEach(c => {
+        c.disabled = !c.checked && checkedCount >= 4;
+      });
+    }
+
+    // Initialize and attach change listeners
+    Object.keys(groupedCheckboxes).forEach(groupName => {
+      const group = groupedCheckboxes[groupName];
+      updateCheckboxes(groupName);
+      group.forEach(cb => {
+        cb.addEventListener('change', () => {
+          updateCheckboxes(groupName);
+          // Sync card flip with checkbox checked state
+          const card = cb.closest('.move-card');
+          if (cb.checked) {
+            card.classList.add('flipped');
+          } else {
+            card.classList.remove('flipped');
+          }
+        });
+      });
+    });
+
+    // flipCard now toggles checkbox only if under 4 selected or unchecking
+    window.flipCard = function(card) {
+      const checkbox = card.querySelector('input[type="checkbox"]');
+      const groupName = checkbox.name;
+      const group = groupedCheckboxes[groupName];
+      const checkedCount = group.filter(c => c.checked).length;
+
+      if (checkbox.checked) {
+        // Unselect card
+        checkbox.checked = false;
+        card.classList.remove('flipped');
+        updateCheckboxes(groupName);
+      } else {
+        if (checkedCount < 4) {
+          // Select card
+          checkbox.checked = true;
+          card.classList.add('flipped');
+          updateCheckboxes(groupName);
+        } else {
+          alert("You can only select up to 4 moves per Pokémon.");
+        }
+      }
+    };
+  });
+
+  // Keep your showPanel function as is
+  function showPanel(currentIndex, direction) {
+    const current = document.getElementById(`poke-${currentIndex}`);
+    const nextIndex = currentIndex + direction;
+    const next = document.getElementById(`poke-${nextIndex}`);
+    if (current && next) {
+        current.classList.add("hidden");
+        next.classList.remove("hidden");
+
+        // After showing new panel, update checkboxes disabling for that Pokémon
+        const pokedexIdInput = next.querySelector('input[type="hidden"][name="pokedex_ids"]');
+        if (pokedexIdInput) {
+        const groupName = `moves_${pokedexIdInput.value}`;
+        if (window.groupedCheckboxes && window.groupedCheckboxes[groupName]) {
+            updateCheckboxes(groupName);
+        }
+        }
+    }
+  }
+</script>
+{% endblock %}

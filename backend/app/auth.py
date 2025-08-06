@@ -67,7 +67,6 @@ def login():
                     sql_cursor.execute(check_user_query, (f"%{username}%", password))
                     existing_user = sql_cursor.fetchone()
                     print(f"existing_user results = {existing_user}")
-                    print(f"User_id is {existing_user['user_id']}")
 
 
                     # Get user_id

@@ -4,7 +4,7 @@
 
 {% block content %}
     <div class="top_navbar">
-        <button type="button" onclick="location.href='{{ url_for('main.home') }}'">← Back to Homepage</button>
+        <button type="button" onclick="location.href='/home'">← Back to Homepage</button>
     </div>
 
     <div class="profile_container">
@@ -36,15 +36,18 @@
                     <dd>{{ badges_earned or "0" }}</dd>
                 </dl>
             </div>
-
-            <div class="profile_actions">
-                <button class="gym_button" type="button" onclick="location.href='{{ url_for('battle.select_gym_leader') }}'">
-                    Challenge the Gyms
-                </button>
+            
+            <div class="profile_buttons">
+                <div class="profile_actions">
+                    <button class="gym_button" type="button" onclick="location.href='/gym/'">
+                        Challenge the Gyms
+                    </button>
+                </div>
+                <div class="delete_account">
+                    <button class="delete_button">Delete Account</button>
+                </div>
             </div>
-            <div class="delete_account">
-                <button class="delete_button">Delete Account</button>
-            </div>
+            
         </div>
     </div>
 {% endblock %}
