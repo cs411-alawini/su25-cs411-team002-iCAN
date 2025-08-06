@@ -12,7 +12,12 @@
         <h1>Your Badges</h1>
 
         <div class="badge-container">
+            <!-- The number of badges is sent from load_badges() in main.py -->
             {% for badge in all_badges %}
+                <!-- 
+                Earned badges are sent from load_badges() in main.py by collecting wins for 
+                    unique gym ids
+                 -->
                 {% set earned = badge.name in earned_badges %}
                 <div class="badge-card {% if not earned %}locked{% endif %}">
                     <img src="{{ url_for('static', filename='badge.png') }}" alt="{{ badge.name }} badge" />

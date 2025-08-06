@@ -108,13 +108,21 @@
 </style>
 
 <h1 class="text-center">Choose Moves for Your Pokémon</h1>
+<!-- 
+  Each Pokemon has its own dedicated move page. Here we display all the possible
+    moves for the pokemon as "cards". Once a user clicks on a card, they flip the card
+    and see all possible information for that move.
+  By flipping a card, the user has chosen the moves for a pokemon
+-->
 <form action="{{ url_for('teams.save_moves') }}" method="POST">
+  <!-- Load all possible moves for the pokemon -->
   {% for poke in moves_by_pokemon %}
     <div class="pokemon-panel {% if not loop.first %}hidden{% endif %}" id="poke-{{ loop.index }}">
       <h2 class="text-center">{{ poke.name }}</h2>
       <input type="hidden" name="pokedex_ids" value="{{ poke.pokedex_id }}">
 
       <div class="move-card-container">
+        <!-- Load all available information for the move -->
         {% for move in poke.moves %}
           <div class="move-card" onclick="flipCard(this)">
             <div class="front">
@@ -133,6 +141,7 @@
         {% endfor %}
       </div>
 
+      <!-- Allows us to go to the next pokemon on the team and to save the chosen moves to the database-->
       <div class="navigation-buttons">
         <button type="button" onclick="showPanel({{ loop.index }}, -1)" {% if loop.first %}class="hidden"{% endif %}>&#8592; Previous Pokémon</button>
         <button type="button" onclick="showPanel({{ loop.index }}, 1)" {% if loop.last %}class="hidden"{% endif %}>Next Pokémon &#8594;</button>
@@ -144,6 +153,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // Group move cards/checkboxes by Pokemon
     const groupedCheckboxes = {};
     const allCheckboxes = document.querySelectorAll('input[type="checkbox"][name^="moves_"]');
     allCheckboxes.forEach(cb => {
@@ -152,6 +162,9 @@ document.addEventListener('DOMContentLoaded', () => {
       groupedCheckboxes[groupName].push(cb);
     });
 
+    // A user can only choose up to 4 moves per pokemon
+    // Once a user has chosen 4 moves, do not allow them to choose
+    // any other moves by toggling the disabled property of all other cards
     function updateCheckboxes(groupName) {
       const group = groupedCheckboxes[groupName];
       const checkedCount = group.filter(c => c.checked).length;
@@ -160,14 +173,14 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Event Listeners
+    // Event Listeners for UI card flipping
     Object.keys(groupedCheckboxes).forEach(groupName => {
       const group = groupedCheckboxes[groupName];
       updateCheckboxes(groupName);
       group.forEach(cb => {
         cb.addEventListener('change', () => {
           updateCheckboxes(groupName);
-          // Sync card flip with checkbox checked state
+          // Flip the card if it is checked
           const card = cb.closest('.move-card');
           if (cb.checked) {
             card.classList.add('flipped');
@@ -178,21 +191,22 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // Flipping a card = select move
+    // When the user clicks on a card, flip that card
     window.flipCard = function(card) {
       const checkbox = card.querySelector('input[type="checkbox"]');
       const groupName = checkbox.name;
       const group = groupedCheckboxes[groupName];
       const checkedCount = group.filter(c => c.checked).length;
 
+      // User has clicked on an already clicked card
+      // This means to unselect card and move and flip back to move side
       if (checkbox.checked) {
-        // Unselect card
         checkbox.checked = false;
         card.classList.remove('flipped');
         updateCheckboxes(groupName);
       } else {
+        // Select and flip the card
         if (checkedCount < 4) {
-          // Select card
           checkbox.checked = true;
           card.classList.add('flipped');
           updateCheckboxes(groupName);
@@ -203,21 +217,26 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   });
 
+  // Controls navigating between Pokemon
+  // For the Next and Previous buttons at the bottom o fthe page
   function showPanel(currentIndex, direction) {
     const current = document.getElementById(`poke-${currentIndex}`);
     const nextIndex = currentIndex + direction;
     const next = document.getElementById(`poke-${nextIndex}`);
     if (current && next) {
-        current.classList.add("hidden");
-        next.classList.remove("hidden");
+      // Hide previous pokemon's move infomration
+      current.classList.add("hidden");
+      // Show the next pokemon's move information
+      next.classList.remove("hidden");
 
-        const pokedexIdInput = next.querySelector('input[type="hidden"][name="pokedex_ids"]');
-        if (pokedexIdInput) {
+      // Enforce 4 moves logic for each pokemon page
+      const pokedexIdInput = next.querySelector('input[type="hidden"][name="pokedex_ids"]');
+      if (pokedexIdInput) {
         const groupName = `moves_${pokedexIdInput.value}`;
         if (window.groupedCheckboxes && window.groupedCheckboxes[groupName]) {
             updateCheckboxes(groupName);
         }
-        }
+      }
     }
   }
 </script>

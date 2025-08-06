@@ -6,6 +6,11 @@
 <!-- For login HTML body -->    
 {% block content %}
 <div class="login_page_body">
+    <!-- 
+        The login() function in auth.py handles user/form validation.
+        - If the user signs up, we send the value "signup" to flask
+        - If the user is logging in, we send the value "login" to flask
+      -->
     <h2 class="login_page" style='color: rgb(68, 69, 71); text-align: center;'>Pokemon Boss Rush Sign Up</h2>
     <form class="login_page" action=" " method="POST">
         <input class="login_page" type="hidden" name="form_type" value="signup">

@@ -17,6 +17,12 @@
     </div>
     
     <div class="pick_team_name">
+      <!-- 
+      If we are creating a new team name, this information gets send to
+        save_team_name() in teams.py.
+      If we are editing a team, this part will be disabled, until the 
+        user chooses to edit the team name by pressing the button.
+        -->
       <form id="set_team_name" method="POST" action="{{ url_for('teams.save_team_name') }}">
         <label for="team_name">🎮 Team Name:</label>
         <input type="text" name="team_name" id="team_name" placeholder="Enter team name" 
@@ -32,6 +38,7 @@
       </form>
     </div>
   
+    <!-- Search bar and form for searching for pokemon to add to team-->
     <div class="search_pokemon">
       <h3>Search for Pokémon</h3>
       <form class="search_team_pokemon" method="POST" action="/teams/create">
@@ -41,6 +48,9 @@
         <br><br>
       </form>
       <div class="display_pokemon">
+        <!-- From create_team() in teams.py:
+         1) Pokemon names with words/letters LIKE what user searched 
+        -->
         {% if pokemon_results %}
           {% for pokemon in pokemon_results %}
             <form method="POST" action="/teams/add" class="pokemon_result">
@@ -55,11 +65,13 @@
       </div>
     </div>
   
+    <!-- Display the user's current team -->
     <div class="pick_pokemon">
       <h3>Current Pokémon Team</h3>
       <form method="POST" action="/teams/update">
         {% for i in range(0, 6) %}
           <label for="pokemon{{ i }}">Pokémon {{ i + 1 }}</label>
+          <!-- From create_team() in teams.py: -->
           <input type="text" name="pokemon{{ i }}" id="pokemon{{ i }}" 
                 value="{{ team[i] if i < team|length else '' }}" />
           {% if i < team|length %}
@@ -77,6 +89,7 @@
 
 {% if team_name %}
 <script>
+  // The team name should be disabled if we're displaying an already-made team
   document.getElementById('edit_team').addEventListener('click', function() {
     const input = document.getElementById('team_name');
     const saveButton = document.getElementById('submit_team');
@@ -87,6 +100,7 @@
   });
 </script>
 <script>
+  // Remove the pokemon from the user's team that they are currently crafting
   document.querySelectorAll('.remove-button').forEach(button => {
     button.addEventListener('click', () => {
       const index = button.getAttribute('data-index');

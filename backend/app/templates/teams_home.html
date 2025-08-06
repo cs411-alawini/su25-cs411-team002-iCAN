@@ -19,6 +19,14 @@
         <input type="text" id="team_searchbar" placeholder="Search teams..." />
     </div>
 
+    <!-- From main.py load_teams(), we receive a dictionary of information with the user's:
+     1) Team ID
+     2) Team name
+     3) List of pokemon
+
+     Each team will be displayed as its own row and will have its own edit and delete buttons. 
+     These buttons send the team ID of the team to flask, so that we know which team we are editing.
+     -->
     <div id="teams_display">
         {% for team in teams %}
         <div class="team_line">
@@ -49,6 +57,8 @@
 </div>
 
 <script>
+// For our team search bar function
+// Allows for keyword searches of team names
 document.getElementById('team_searchbar').addEventListener('input', function () {
     const query = this.value.toLowerCase();
     const teamElements = document.querySelectorAll('.team_line');
