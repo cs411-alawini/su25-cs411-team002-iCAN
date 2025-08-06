@@ -22,7 +22,8 @@ def login():
         password = request.form.get('pwd')
         email = request.form.get('email')
 
-        print(form_type, username, password, email)
+        # FOR DEBUGGING
+        # print(form_type, username, password, email)
     
         # Setup to connect to GCP
         db_conn = getconn()
@@ -46,17 +47,19 @@ def login():
                     if existing_username:
                         return "Username already exists."
 
-                    # Insert new user using the STORED PROCEDURE AddNewUser
+                    # Insert new user into users table
                     new_user_query = "INSERT INTO users (user_name, pwd, email, is_active) VALUES (%s, %s, %s, %s)"
                     sql_cursor.execute(new_user_query, (username, password, email, 1))
                     user_id = sql_cursor.lastrowid
                     db_conn.commit()
 
+                    # Store username, user_id, and email for other html pages
                     session['username'] = username
                     session['user_id'] = user_id
                     session['email'] = email
                     
-                    print("Signup successful! Please log in.") 
+                    # FOR DEBUGGING
+                    # print("Signup successful! Please log in.") 
                     return redirect(url_for('home.load_homepage'))
 
 
@@ -69,11 +72,12 @@ def login():
                     print(f"existing_user results = {existing_user}")
 
 
-                    # Get user_id
+                    # Get user_id of the user
                     get_user_id = "SELECT user_id FROM users WHERE user_name LIKE %s AND pwd = %s"
                     sql_cursor.execute(get_user_id, (f"%{username}%", password))
                     user_id = sql_cursor.fetchone()
 
+                    # Store username, user_id, and email for other html pages
                     if existing_user:
                         session['username'] = username
                         session['user_id'] = existing_user['user_id']

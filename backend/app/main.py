@@ -20,8 +20,6 @@ def root():
         return redirect(url_for('home.load_homepage'))
 
 
-
-
 # Create the endpoint at url_prefix='/home'
 @bp.route('/home', methods=['POST','GET'])
 def load_homepage():
@@ -29,7 +27,14 @@ def load_homepage():
     The user has logged in or signed up for the game and is now brought
         to the Pokemon Boss Rush Homepage.
     """
+
+    # The user JUST logged in, so we do not need to
+    # check if their username is in session. We will
+    # just pull it from the sessions
     username = session.get('username')
+
+    # Now, our page will be tailored to the user
+    # via Jinja code in our HTML pages
     return render_template('homepage.html', user=username)
 
 
@@ -39,9 +44,10 @@ def load_homepage():
 @bp.route('/profile', methods=['POST','GET'])
 def load_profile():
     """
-    The user has clicked the Profile button from the homepage
+    The user has clicked the Profile button from the homepage.
     """
     # Username and emails are stored in session from AUTH.PY
+    # So, we can just grab those values from the session
     username = session.get('username')
     email = session.get('email')
     user_id = session.get('user_id')
@@ -49,20 +55,21 @@ def load_profile():
     # Setup to connect to GCP
     db_conn = getconn()
 
-    # Stored procedure determines badge_level (novice, intermediate, advanced)
+    # Default values - For debugging purposes
     badge_level = "unknown for now"
-    # Get the number of badges earned
     badges_earned = "unknown for now"
-    # Stored procedure determine win_loss_rate
     win_loss_rate = "unknown for now"
-    # Stored procedure determines average_battle_time
     avg_battle_time = "unknown for now"
+
+    # Now, calculate values for these variables via
+    # SQL queries
     try:
         # Open "context manager" for sql_cursor (auto-ends)
         with db_conn.cursor() as sql_cursor:
         
             # Set isolation level - we do not want write-write conflicts
-            # There should only be unique usernames
+            # In case the user has the game open in two windows, or 
+            # multiple windows
             sql_cursor.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;")
 
 
@@ -104,7 +111,9 @@ def load_profile():
             sql_cursor.execute(get_win_rate, (user_id, user_id))
             win_rate_result = sql_cursor.fetchone()
             win_loss_rate = win_rate_result['win_percentage']
-            print(f"win loss rate is = {win_rate_result}")
+
+            # DEBUGGING
+            #print(f"win loss rate is = {win_rate_result}")
 
 
             # Get the average battle time
@@ -116,18 +125,19 @@ def load_profile():
             sql_cursor.execute(get_avg_battle_time, (user_id, ))
             avg_battle_time_result = sql_cursor.fetchone()
             avg_battle_time = avg_battle_time_result['avg_time']
-            print(f"Avg battle time result is = {avg_battle_time_result}")
+
+            # DEBUGGING
+            # print(f"Avg battle time result is = {avg_battle_time_result}")
 
     # Close connection to GCP
     finally:
             db_conn.close()
     
-
+    # Render our template with information specific to the user
+    # We know how specific to be because of the values in sessions
     return render_template('profile.html', user=username, badge_level=badge_level, 
                            email=email, win_loss_rate=win_loss_rate, avg_battle_time=avg_battle_time,
                            badges_earned=badges_earned)
-
-
 
 
 
@@ -138,18 +148,24 @@ def load_teams():
     """
     The user has clicked the Teams button from the homepage
     """
+    # Deal with asking user to re-login
+    if 'username' not in session:
+        return redirect(url_for('auth.login'))
+
     # Username should already be stored in session
     username = session.get('username')
+
 
      # Setup to connect to GCP
     db_conn = getconn()
  
     try:
-        # Open "context manager" for sql_cursor (auto-ends)
+        # Open "context manager" for sql_cursor
+        # Allows us to write multiple queries
         with db_conn.cursor() as sql_cursor:
         
             # Set isolation level - we do not want write-write conflicts
-            # There should only be unique usernames
+            # Just in case the user has multiple windows open with the app running
             sql_cursor.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;")
 
 
@@ -172,10 +188,10 @@ def load_teams():
 
     # Organize pokemons by team_id for easy access in template
     teams_map = {}
-    for row in team_pokemons:
-        team_id = row['user_team_id']
-        team_name = row['team_name']
-        pokemon_name = row['pokedex_name']
+    for record in team_pokemons:
+        team_id = record['user_team_id']
+        team_name = record['team_name']
+        pokemon_name = record['pokedex_name']
         
         if team_id not in teams_map:
             teams_map[team_id] = {
@@ -185,7 +201,9 @@ def load_teams():
             }
         teams_map[team_id]['pokemons'].append(pokemon_name)
 
+    # Send user's teams and pokemon on them for the HTML page
     teams_data = list(teams_map.values())
+    # Jinja will handle grabbing information and loading in template
     return render_template('teams_home.html', teams=teams_data)
 
 
@@ -198,19 +216,22 @@ def load_battle():
     """
     Renders a form to select a team and gym leader (no Pokémon data shown).
     """
-    username = session.get('username')
-    if not username:
+    # Deal with asking user to re-login
+    if 'username' not in session:
         return redirect(url_for('auth.login'))
+    # Get username from session
+    username = session.get('username')
 
+    # Setup to store query results in
     user_teams = []
-    gyms = []
     selected_user_team_id = None
     selected_gym_id = None
 
+    # Connect to GCP
     db_conn = getconn()
     try:
         with db_conn.cursor() as sql_cursor:
-            # Get user's teams
+            # Get user's teams, using username from session
             get_user_teams = """
                 SELECT UT.user_team_id, UT.team_name
                 FROM users U
@@ -229,7 +250,7 @@ def load_battle():
             sql_cursor.execute(get_gym_leaders)
             gym_leaders = sql_cursor.fetchall()
 
-            # If the user submitted the form, store their selections (optional)
+            # If the user submitted the form, store their selections
             if request.method == 'POST':
                 selected_user_team_id = request.form.get('user_team_id')
                 selected_gym_id = request.form.get('gym_id')
@@ -237,12 +258,12 @@ def load_battle():
     finally:
         db_conn.close()
 
-    return render_template(
-        'battle_home.html',
-        user_teams=user_teams,
-        gyms=gym_leaders,
-        selected_user_team_id=selected_user_team_id,
-        selected_gym_id=selected_gym_id
+    # Send query results to Jinja
+    return render_template('battle_home.html', 
+                            user_teams=user_teams, 
+                            gyms=gym_leaders, 
+                            selected_user_team_id=selected_user_team_id,
+                            selected_gym_id=selected_gym_id
     )
 
 
@@ -255,14 +276,18 @@ def load_badges():
     """
     The user has clicked the Badges button from homepage
     """
+    # Deal with asking user to re-login
+    if 'username' not in session:
+        return redirect(url_for('auth.login'))
+    
+    # Get username and user_id from sessions
     username = session.get('username')
     user_id = session.get('user_id')
 
-    if not username:
-        return redirect(url_for('auth.login'))
-
+    # Connect to GCP
     db_conn = getconn()
 
+    # Set up variables to store query results in
     all_gym_badges = []
     earned_badges = []
 
@@ -276,15 +301,20 @@ def load_badges():
             """
             sql_cursor.execute(get_badge_name)
             gym_badges_dict = sql_cursor.fetchall()
-            for pair in gym_badges_dict:
-                badge_title = pair['badge_title']
+            # Because there are multiple badges, our query results will return
+            # a dictionary of results. We only really need the 'badge_title' since
+            # we don't have other values in our DB, but just in case we end up 
+            # adding a badge description and custom image, we will just grab all
+            # parts of the query results
+            for record in gym_badges_dict:
+                badge_title = record['badge_title']
                 all_gym_badges.append({
                     "name": badge_title,
                     "description": "",  
                     "image_filename": "badge.png"  
                 })
 
-            # Get a user's earned badges
+            # Get a user's earned badges, using the user_id from session
             get_earned_badges = """
                 SELECT DISTINCT GL.badge_title
                 FROM (
@@ -297,10 +327,12 @@ def load_badges():
             """
             sql_cursor.execute(get_earned_badges, (user_id,))
             earned_badges_dict = sql_cursor.fetchall()
+            # We just want the badge titles from the dictionary
             for pair in earned_badges_dict:
                 earned_badges.append(pair['badge_title']) 
 
     finally:
         db_conn.close()
 
+    # Jinja will take care of loading the results into our template
     return render_template('badges.html', all_badges=all_gym_badges, earned_badges=earned_badges)

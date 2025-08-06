@@ -8,41 +8,46 @@ bp = Blueprint('gym', __name__, url_prefix='/gym')
 # Create the endpoint at url_prefix='/gyms'
 @bp.route('/', methods=['GET'])
 def select_gym_leader():
+    """
+    The user has selected the Gyms button from the homepage, or the Enter Gym button on the homepage,
+        or the enter gym battle on the profile page. Load all the gyms on gym.html.
+    """
     conn = None
     try:  
         # Get the database connection
         conn = getconn()
-        print('Connection open.')
+
+        # DEBUGGING
+        # print('Connection open for select_gym_leader()')
     
         # Create a cursor to execute queries and return in a dict format
         cursor = conn.cursor()
     
+        # Get all the gym_leader information
         query = "SELECT * FROM gym_leaders ORDER BY gym_id;"
-        # Select query
-        print('Fetching data...')
+        # print('Fetching data...')
         cursor.execute(query)
-        print('Data successfully fetched.')
+        # print('Data successfully fetched.')
     
-        # Fetch the results
+        # Fetch the results - all the gym_leader information
         results = cursor.fetchall()
     
-        # Print results (for debugging)
-        for i in results:
-            print(i)
+        # DEBUGGING - print query results
+        # for i in results:
+            # print(i)
     
         # Close the cursor and return the data as JSON
         cursor.close()
-        #return jsonify(results)
 
-        # Rendering results in viewer
+        # Send gym leader information from query to Jinja
         return render_template('gym.html', leaders=results)
 
     except Exception as e:
-        print(f"There was an error fetching data: {e}")
+        print(f"There was an error fetching data in select_gym_leader(): {e}")
         return jsonify({"error": str(e)}), 500
   
     finally: 
         # Close the connection
         if conn is not None:
             conn.close()
-            print('Connection closed.')
+            # print('Connection closed in select_gym_leader()')
