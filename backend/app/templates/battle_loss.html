@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Battle Result</title>
+  <style>
+    :root {
+      --primary: #990000;
+      --accent: #ff9999;
+      --bg: #1a1a1a;
+      --text: #ffffff;
+      --muted: #bbbbbb;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      text-align: center;
+      padding: 60px 20px;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 20px;
+      color: var(--accent);
+    }
+
+    .badge-section {
+      margin-top: 30px;
+    }
+
+    .badge-section h2 {
+      font-size: 1.8rem;
+      color: var(--text);
+      margin-bottom: 15px;
+    }
+
+    .badge-section img {
+      max-width: 180px;
+      border: 4px solid var(--accent);
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(255, 153, 153, 0.3);
+    }
+
+    p {
+      font-size: 1.2rem;
+      color: var(--muted);
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 50px;
+      padding: 12px 24px;
+      background-color: var(--accent);
+      color: var(--bg);
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background-color 0.2s ease;
+    }
+
+    a:hover {
+      background-color: #ff6666;
+    }
+  </style>
+</head>
+<body>
+  <h1>You Lost the Battle</h1>
+
+  {% if badge %}
+    <div class="badge-section">
+      <h2>Badge Earned: {{ badge.badge_title }}</h2>
+      <img src="{{ badge.badge_image }}" alt="Badge Image" />
+    </div>
+  {% else %}
+    <p>No badge earned this time. Train hard and try again!</p>
+  {% endif %}
+
+  <a href="{{ url_for('home.load_homepage') }}">
+    Return to Home
+  </a>
+</body>
+</html>

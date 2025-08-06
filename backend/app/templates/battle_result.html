@@ -1,78 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <link rel="icon" href="{{ url_for('static', filename='pokeball.png') }}" type="image/png">
   <title>Battle Result</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style/battle.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style/table.css') }}">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f4ff;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      color: #4caf50;
+      margin-top: 40px;
+      text-align: center;
+      text-shadow: 1px 1px 3px #ccc;
+    }
+
+    .badge-section {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 15px;
+      box-shadow: 0 6px 15px rgba(108, 99, 255, 0.3);
+      margin-top: 30px;
+      text-align: center;
+      max-width: 320px;
+      width: 100%;
+    }
+
+    .badge-section h2 {
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+      color: #6c63ff;
+    }
+
+    .badge-section img {
+      max-width: 200px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .badge-section img:hover {
+      transform: scale(1.05);
+    }
+
+    p.no-badge-message {
+      margin-top: 30px;
+      font-size: 1.2rem;
+      color: #888;
+      text-align: center;
+      font-style: italic;
+    }
+
+    .start-link {
+      margin-top: 40px;
+      font-size: 1.2rem;
+      color: #6c63ff;
+      text-decoration: none;
+      font-weight: 600;
+      border: 2px solid #6c63ff;
+      padding: 10px 20px;
+      border-radius: 12px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      display: inline-block;
+    }
+
+    .start-link:hover {
+      background-color: #6c63ff;
+      color: white;
+    }
+  </style>
 </head>
-
 <body>
-  <h1>Battle Result</h1>
-
-  <div class="result-box">
-    <div class="result-row"><span class="result-label">Battle ID:</span> {{ battle_id }}</div>
-    <div class="result-row"><span class="result-label">Start Time:</span> {{ start }}</div>
-    <div class="result-row"><span class="result-label">End Time:</span> {{ end }}</div>
-    <div class="result-row">
-      <span class="result-label">Outcome:</span>
-      {% if outcome == 1 %}
-        <span class="win-text">Win 🎉</span>
-      {% else %}
-        <span class="loss-text">Loss ❌</span>
-      {% endif %}
-    </div>
-  </div>
-
-  <h3>Your Pokémon Team</h3>
-  <div class="result-box table-wrapper">
-    <table class="user_teams-table"><!--Pay Attention-->
-      <tr>
-        {% for key in user_team[0].keys() %}
-          <th>{{ key }}</th>
-        {% endfor %}
-      </tr>
-      {% for row in user_team %}
-        <tr>
-          {% for value in row.values() %}
-            <td>{{ value }}</td>
-          {% endfor %}
-        </tr>
-      {% endfor %}
-    </table>
-  </div>
-
-  <h3>Gym Team</h3>
-  <div class="result-box table-wrapper">
-    <table class="gym-table"><!--Pay Attention-->
-      <tr>
-        {% for key in gym_team[0].keys() %}
-          <th>{{ key }}</th>
-        {% endfor %}
-      </tr>
-      {% for row in gym_team %}
-        <tr>
-          {% for value in row.values() %}
-            <td>{{ value }}</td>
-          {% endfor %}
-        </tr>
-      {% endfor %}
-    </table>
-  </div>
+  <h1>🎉 You Won the Battle! 🎉</h1>
 
   {% if badge %}
-  <div class="result-box badge-section">
-    <h3>🏅 Badge Earned: {{ badge.badge_title }}</h3>
-    <img src="{{ badge.badge_image }}" alt="Badge Image">
+  <div class="badge-section">
+    <h2>🏅 Badge Earned: {{ badge.badge_title }}</h2>
+    <img src="{{ url_for('static', filename='badge.png') }}" alt="Badge Image">
   </div>
   {% else %}
-  <div class="result-box">
-    <p>No badge earned. Better luck next time!</p>
-  </div>
+  <p class="no-badge-message">No badge earned. Better luck next time!</p>
   {% endif %}
 
-  <a href="{{ url_for('start_battle') }}" class="back-link">← Start Another Battle</a><!--Pay Attention-->
+  <a href="{{ url_for( 'home.load_homepage' ) }}" class="start-link">
+    ← Go to homepage
+  </a>
 </body>
-
 </html>

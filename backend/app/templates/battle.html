@@ -117,7 +117,7 @@
     function showMoveMenu() {
         const fightButton = document.getElementById('fight-button');
         if (fightButton.disabled) {
-            alert("Your Pokemon has fainted! You must switch.");
+            //alert("Your Pokemon has fainted! You must switch.");
             return;
         }
         document.getElementById('action-menu').style.display = 'none';
@@ -133,6 +133,23 @@
         const response = await fetch(`/battle/api/team/${user_team_id}`);
         const teamData = await response.json();
         
+        /*
+        // Add this check here:
+        const allFainted = teamData.every(pokemon => pokemon.current_hp <= 0);
+        if (allFainted) {
+            alert("All your Pokémon have fainted! You lost the battle.");
+            setTimeout(() => {
+                const battleId = container ? container.dataset.battleId : null;
+                if (battleId) {
+                    window.location.href = `/battle/loss?battle_id=${battleId}`;
+                } else {
+                    window.location.href = `/battle/loss`;
+                }
+            }, 1000);
+            return;  // stop the rest of showTeam from running
+        }
+            */
+
         teamMenu.innerHTML = '';
         teamData.forEach(pokemon => {
             const pokeButton = document.createElement('button');
@@ -221,7 +238,7 @@
         // Disable "fight" option if pokemon has fainted
         const playerCurrentHp = parseInt(container.dataset.playerCurrentHp, 10) || 0;
         if (playerCurrentHp <= 0) {
-            alert("Your Pokemon has fainted! You must switch before making a move.");
+            //alert("Your Pokemon has fainted! You must switch before making a move.");
             return;
         }
 
@@ -282,6 +299,22 @@
 
                     dialogueBox.innerHTML = `<p>The opponent's ${document.getElementById("opponent-name").innerText} fainted!</p>`;
 
+                    if (result.ai_switch_info.game_over) {
+                        // Game is over — stop here
+                        setTimeout(() => {
+                            dialogueBox.innerHTML = `<p>All of the opponent's Pokémon have fainted. You win!</p>`;
+                            document.getElementById('action-menu').style.display = 'none';
+                            document.getElementById('move-menu').style.display = 'none';
+
+                            // Optional: redirect to a victory page
+                            setTimeout(() => {
+                                window.location.href = '/battle/victory';
+                            }, 3000);
+                        }, 2000);
+                        return;  // prevent further execution
+                    }
+
+                    // Otherwise: switch to next opponent Pokémon
                     setTimeout(() => {
                         const newOpponent = result.ai_switch_info;
 
@@ -305,6 +338,16 @@
                             dialogueBox.innerHTML = `<p>What will ${document.getElementById("player-name").innerText} do?</p>`;
                         }, 2000);
                     }, 2000);
+                } else if (result.gym_defeated) {
+                    // Stop everything and show a victory message
+                    dialogueBox.innerHTML = `<p>The opponent has no Pokémon left. You win the battle!</p>`;
+                    document.getElementById('action-menu').style.display = 'none';
+                    document.getElementById('move-menu').style.display = 'none';
+
+                    // OPTIONAL: redirect to results page after 3 seconds
+                    setTimeout(() => {
+                        window.location.href = `/battle/victory?battle_id=${result.battle_id}`;  // make sure this route exists in Flask
+                    }, 3000);
                 } else {
                     let hpPercent = Math.min(Math.max((opponentHp / (parseInt(container.dataset.opponentMaxHp) || 1)) * 100, 0), 100);
                     opponentHpBar.style.width = hpPercent + '%';
@@ -332,6 +375,29 @@
 
                 let playerHpPercent = Math.min(Math.max((playerHp / playerMaxHp) * 100, 0), 100);
                 playerHpBar.style.width = playerHpPercent + '%';
+
+                // After updating playerHp, check if active fainted
+                if (playerHp <= 0) {
+                    // Fetch entire team data to check if any Pokemon alive
+                    const teamResponse = await fetch(`/battle/api/team/${container.dataset.userTeamId}`);
+                    const teamData = await teamResponse.json();
+                    
+                    const anyAlive = teamData.some(p => p.current_hp > 0);
+                    if (!anyAlive) {
+                        // All fainted, redirect to loss page
+                        setTimeout(() => {
+                            window.location.href = `/battle/loss?battle_id=${result.battle_id}`;
+                        }, 3000);
+                        return;  // stop further code
+                    } else {
+                        // There are still alive Pokemon, force switch or allow switch UI
+                        //alert("Your current Pokémon fainted! Please switch to another Pokémon.");
+                        // You can automatically open the switch menu here, e.g.
+                        showTeam();
+                        return;
+                    }
+                }
+
 
             } else {
                 dialogueBox.innerHTML = `<p>An error occurred: ${result.message}</p>`;
@@ -382,6 +448,25 @@
 
             container.dataset.playerCurrentHp = result.player_hp;
             updateFightButton();
+
+            // Add this:
+            if (result.player_hp <= 0) {
+                // Fetch entire team data to check if any alive
+                const teamResponse = await fetch(`/battle/api/team/${container.dataset.userTeamId}`);
+                const teamData = await teamResponse.json();
+
+                const anyAlive = teamData.some(p => p.current_hp > 0);
+                if (!anyAlive) {
+                    setTimeout(() => {
+                        window.location.href = `/battle/loss?battle_id=${container.dataset.battleId}`;
+                    }, 3000);
+                    return;
+                } else {
+                    //alert("Your current Pokémon fainted! Please switch to another Pokémon.");
+                    showTeam();
+                    return;
+                }
+            }           
 
             setTimeout(() => {
                 dialogueBox.innerHTML = `<p>What will ${document.getElementById('player-name').innerText} do?</p>`;

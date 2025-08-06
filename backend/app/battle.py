@@ -1,5 +1,6 @@
 from flask import jsonify, render_template, Blueprint, request, session, redirect, url_for
 from app.db import getconn
+from datetime import datetime
 import traceback
 
 bp = Blueprint('battle', __name__, url_prefix='/battle')
@@ -16,11 +17,15 @@ def start_battle(gym_id):
             return redirect(url_for('auth.login'))
 
         # This should have been stored from auth.py
+        if 'user_id' not in session:
+            return redirect(url_for('auth.login'))
+
         user_id = session['user_id']
 
         # Connect to GCP
         conn = getconn()
         cursor = conn.cursor()
+
 
         # Get user's team to battle the gym with.
         # By default, this will be the first team they created.
@@ -37,6 +42,20 @@ def start_battle(gym_id):
 
         # Get the team's id from the query results
         user_team_id = battle_team['user_team_id']
+
+        # Insert new battle record with initial data
+        insert_battle_sql = """
+            INSERT INTO battles (user_team_id, gym_id, start_time)
+            VALUES (%s, %s, NOW())
+        """
+        cursor.execute(insert_battle_sql, (user_team_id, gym_id))
+        battle_id = cursor.lastrowid
+
+        # Commit this insertion
+        conn.commit()
+
+        # Store battle_id in session
+        session['battle_id'] = battle_id
 
         # Before each battle, reset each pokemon's HP by writing to DB
         # We know which value to reset to by looking at the pokedex (static DB)
@@ -309,6 +328,7 @@ def process_turn():
             else:
                 # The gym leader has no more pokemon left to play, so..
                 # The user wins!
+
                 return jsonify({
                     "success": True,
                     "message": outcome_message + " All of the opponent's Pokémon have fainted. You win!",
@@ -319,8 +339,9 @@ def process_turn():
                     "player_move_pps": player_move_pps,
                     "ai_switch_info": {
                         "game_over": True
-                    }
-                }) 
+                    },
+                    "battle_id": session['battle_id']
+                })
 
         # Add changes to database
         conn.commit()
@@ -601,3 +622,86 @@ def get_moves(member_id):
     finally:
         if conn:
             conn.close()
+
+@bp.route('/victory')
+def battle_victory():
+    battle_id = session.get('battle_id')
+    if not battle_id:
+        return "No battle ID found in session.", 400
+
+    conn = None
+    badge = None
+    try:
+        conn = getconn()
+        cursor = conn.cursor()
+
+        # 1) Update battle record with outcome and end time (assuming outcome=1 for win)
+        update_query = """
+            UPDATE battles
+            SET win_loss_outcome = 1,
+                end_time = %s
+            WHERE battle_id = %s
+        """
+        cursor.execute(update_query, (datetime.utcnow(), battle_id))
+        conn.commit()
+
+        # 2) Fetch badge info
+        badge_query = """
+            SELECT gl.badge_title, gl.badge_image
+            FROM battles b
+            JOIN gym_leaders gl ON b.gym_id = gl.gym_id
+            WHERE b.battle_id = %s
+        """
+        cursor.execute(badge_query, (battle_id,))
+        badge = cursor.fetchone()
+
+    except Exception as e:
+        print(f"Error in battle_victory route: {e}")
+        badge = None
+    finally:
+        if conn:
+            conn.close()
+
+    # Optionally clear the battle_id from session so it's not reused accidentally
+    session.pop('battle_id', None)
+
+    return render_template('battle_result.html', badge=badge)
+
+
+@bp.route('/loss')
+def battle_loss():
+    battle_id = request.args.get('battle_id')
+    badge = None
+
+    if battle_id:
+        conn = None
+        try:
+            conn = getconn()
+            cursor = conn.cursor(dictionary=True)
+            query = """
+                SELECT gl.badge_title, gl.badge_image
+                FROM battles b
+                JOIN gym_leaders gl ON b.gym_id = gl.gym_id
+                WHERE b.battle_id = %s
+            """
+            cursor.execute(query, (battle_id,))
+            badge = cursor.fetchone()
+
+            # 1) Update battle record with outcome and end time (assuming outcome=1 for win)
+            update_query = """
+                UPDATE battles
+                SET win_loss_outcome = 0,
+                    end_time = %s
+                WHERE battle_id = %s
+            """
+            cursor.execute(update_query, (datetime.utcnow(), battle_id))
+            conn.commit()
+        except Exception as e:
+            print(f"Error fetching badge info: {e}")
+            badge = None
+        finally:
+            if conn:
+                conn.close()
+
+    return render_template('battle_loss.html', badge=badge)
+

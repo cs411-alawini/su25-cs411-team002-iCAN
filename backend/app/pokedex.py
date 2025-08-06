@@ -47,13 +47,13 @@ def get_pokemon_by_name(name):
         cursor = conn.cursor()
 
         # Match the user's name search with a name from the database
-        get_pokemon_name = "SELECT * FROM pokedex_entries WHERE LOWER(name) LIKE LOWER(%s);"
+        get_pokemon_name = "SELECT * FROM pokedex_entries WHERE LOWER(name) LIKE LOWER(%s) LIMIT 10;"
         cursor.execute(get_pokemon_name, (f"%{name}%",))
-        pokemon_name = cursor.fetchone()
+        pokemon_name = cursor.fetchall()
         cursor.close()
 
         # Send the pokemon's name from the database to Jinja to display results
-        return render_template('pokedex.html', pokemon=pokemon_name)
+        return render_template('pokedex.html', entries=pokemon_name)
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
