@@ -144,7 +144,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Group checkboxes by Pokémon group name (e.g., moves_123)
     const groupedCheckboxes = {};
     const allCheckboxes = document.querySelectorAll('input[type="checkbox"][name^="moves_"]');
     allCheckboxes.forEach(cb => {
@@ -161,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Initialize and attach change listeners
+    // Event Listeners
     Object.keys(groupedCheckboxes).forEach(groupName => {
       const group = groupedCheckboxes[groupName];
       updateCheckboxes(groupName);
@@ -179,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // flipCard now toggles checkbox only if under 4 selected or unchecking
+    // Flipping a card = select move
     window.flipCard = function(card) {
       const checkbox = card.querySelector('input[type="checkbox"]');
       const groupName = checkbox.name;
@@ -204,7 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   });
 
-  // Keep your showPanel function as is
   function showPanel(currentIndex, direction) {
     const current = document.getElementById(`poke-${currentIndex}`);
     const nextIndex = currentIndex + direction;
@@ -213,7 +211,6 @@ document.addEventListener('DOMContentLoaded', () => {
         current.classList.add("hidden");
         next.classList.remove("hidden");
 
-        // After showing new panel, update checkboxes disabling for that Pokémon
         const pokedexIdInput = next.querySelector('input[type="hidden"][name="pokedex_ids"]');
         if (pokedexIdInput) {
         const groupName = `moves_${pokedexIdInput.value}`;

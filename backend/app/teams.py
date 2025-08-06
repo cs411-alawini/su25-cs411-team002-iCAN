@@ -349,7 +349,7 @@ def choose_moves():
     db_conn = getconn()
     try:
         with db_conn.cursor() as cursor:
-            # Get the pokedex_id and name for each Pokémon on the user's team
+            # Get the pokedex_id and name for each Pokemon on the user's team
             get_team_query = """
                 SELECT PE.pokedex_id, PE.name
                 FROM user_poke_team_members UPT
@@ -360,7 +360,7 @@ def choose_moves():
             cursor.execute(get_team_query, (user_team_id,))
             team_pokemon = cursor.fetchall()
 
-            # For each Pokémon, get its available moves (all move info)
+            # For each Pokeon, get its available moves (all move info)
             moves_by_pokemon = []
             for poke in team_pokemon:
                 pokedex_id = poke['pokedex_id']
@@ -374,12 +374,12 @@ def choose_moves():
                     ORDER BY M.move_name
                 """
                 cursor.execute(get_moves_query, (pokedex_id,))
-                move_results = cursor.fetchall()  # list of dicts
+                move_results = cursor.fetchall()  
 
                 moves_by_pokemon.append({
                     'name': name,
                     'pokedex_id': pokedex_id,
-                    'moves': move_results  # full move info
+                    'moves': move_results 
                 })
 
     finally:
@@ -415,9 +415,9 @@ def save_moves():
                 # Get moves selected by user for this pokedex_id
                 selected_moves = request.form.getlist(f"moves_{pokedex_id}")
 
-                # Validate: must have exactly 4 moves selected
+                # Users can only have four moves per pokemon
                 if len(selected_moves) != 4:
-                    # Handle error (e.g., flash message or redirect with error)
+                    # Error handling
                     return "Please select exactly 4 moves for each Pokémon.", 400
 
                 # For each move name, get move_id and initial current_pp from moves table
@@ -434,7 +434,7 @@ def save_moves():
                         # Move not found, handle error or skip
                         return f"Move '{move_name}' not found.", 400
 
-                # Update the user_poke_team_members row for this Pokémon with the chosen moves and their PP
+                # Update the user_poke_team_members row for this Pokemon with the chosen moves and their PP
                 update_moves_sql = """
                     UPDATE user_poke_team_members
                     SET move_1_id = %s, move_1_current_pp = %s,
@@ -455,6 +455,4 @@ def save_moves():
 
     finally:
         db_conn.close()
-
-    # After saving, redirect to a confirmation page or team overview
     return redirect(url_for('home.load_teams'))
